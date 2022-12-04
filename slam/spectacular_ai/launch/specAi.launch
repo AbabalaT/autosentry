@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="camera_model"         default="OAK-D-PRO"            />
-    <arg name="enableRviz"           default="false"            />
+    <arg name="enableRviz"           default="true"            />
     <arg name="tf_prefix"            default="oak"              />
     <arg name="base_frame"           default="oak-d_frame"      />
     <arg name="parent_frame"         default="oak-d-base-frame" />
@@ -44,7 +44,7 @@
     </node>
 
     <group if="$(eval arg('enableRviz') == true)">
-        <node type="rviz" name="rviz" pkg="rviz" args="-d $(find depthai_examples)/rviz/stereoInertialROS1.rviz" />
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find spectacular_ai)/rviz/axesAndPC.rviz" />
     </group>
 
 </launch>
