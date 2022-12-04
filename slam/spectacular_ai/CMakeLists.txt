@@ -40,7 +40,7 @@ catkin_package(
 
 include_directories(
         include
-        thirdparty/include
+        thirdparty/spectacularAI/include
         ${OpenCV_INCLUDE_DIRS}
         ${tf2_ros_INCLUDE_DIRS}
         ${depthai_bridge_INCLUDE_DIRS}
@@ -54,7 +54,7 @@ add_executable(
         src/ros_bridge.cpp
 )
 
-target_link_directories(${PROJECT_NAME}_node PRIVATE thirdparty/lib)
+target_link_directories(${PROJECT_NAME}_node PRIVATE thirdparty/spectacularAI/lib)
 
 target_link_libraries(
         ${PROJECT_NAME}_node
