@@ -26,7 +26,10 @@
         <arg name="cam_yaw"         value="$(arg  cam_yaw)"     />
     </include>
 
-    <node pkg="spectacular_ai" type="spectacular_ai_node" name="front" output="screen"/>
+    <node pkg="spectacular_ai" type="spectacular_ai_node" name="front" output="screen" >
+        <rosparam file="$(find spectacular_ai)/params/vio.yaml" />
+        <param name="tf_prefix"       value="$(arg tf_prefix)" />
+    </node>
 
     <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_nodelet_manager"  args="manager" output="screen"/>
 

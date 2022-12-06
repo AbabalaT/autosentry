@@ -52,6 +52,7 @@ add_executable(
         src/main.cpp
         src/oakInterface.cpp
         src/ros_bridge.cpp
+        src/config.cpp
 )
 
 target_link_directories(${PROJECT_NAME}_node PRIVATE thirdparty/spectacularAI/lib)

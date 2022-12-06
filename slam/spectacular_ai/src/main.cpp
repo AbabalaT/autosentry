@@ -9,19 +9,19 @@
 #include <opencv2/opencv.hpp>
 #include "spectacular_ai/oakInterface.h"
 #include "spectacular_ai/ros_bridge.h"
+#include "spectacular_ai/config.h"
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "spectacular_ai");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
+    auto config = getConfig();
     geometry_msgs::TransformStamped transform2map, transform2base;
     nav_msgs::Odometry odom;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
-    oakConfig oak_config{};
-    rosBridgeConfig ros_config{.tfPrefix="oak_front"};
-    oakInterface oak("", oak_config);
-    ros_bridge bridge(ros_config, oak_config, oak.readCalibration());
+    oakInterface oak("", config.oak);
+    ros_bridge bridge(config.ros, config.oak, oak.readCalibration());
     ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 5);
     bridge.registerRgbQueue(oak.getRgbQueue(30));
     oak.registerImuHook(bridge.imuPublish);
@@ -66,9 +66,9 @@ int main(int argc, char** argv) {
                 vioOut->velocityCovariance[0][0], vioOut->velocityCovariance[0][1], vioOut->velocityCovariance[0][2], 0, 0, 0,
                 vioOut->velocityCovariance[1][0], vioOut->velocityCovariance[1][1], vioOut->velocityCovariance[1][2], 0, 0, 0,
                 vioOut->velocityCovariance[2][0], vioOut->velocityCovariance[2][1], vioOut->velocityCovariance[2][2], 0, 0, 0,
-                0, 0, 0, 1e-2, 0, 0,
-                0, 0, 0, 0, 1e-2, 0,
-                0, 0, 0, 0, 0, 1e-2
+                0, 0, 0, config.ros.angularVelCovariance, 0, 0,
+                0, 0, 0, 0, config.ros.angularVelCovariance, 0,
+                0, 0, 0, 0, 0, config.ros.angularVelCovariance
         };
 
         odom_pub.publish(odom);
