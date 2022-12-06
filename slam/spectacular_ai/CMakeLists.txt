@@ -20,7 +20,6 @@ add_definitions(-DCALIBRATION_PATH="${PROJECT_SOURCE_DIR}/params/camera/")
 
 find_package(depthai REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(tf2_ros REQUIRED)
 find_package(depthai_bridge REQUIRED)
 find_package(
         catkin REQUIRED COMPONENTS
@@ -28,6 +27,8 @@ find_package(
         roscpp
         sensor_msgs
         std_msgs
+        nav_msgs
+        tf2_ros
         image_transport
 )
 
@@ -42,7 +43,6 @@ include_directories(
         include
         thirdparty/spectacularAI/include
         ${OpenCV_INCLUDE_DIRS}
-        ${tf2_ros_INCLUDE_DIRS}
         ${depthai_bridge_INCLUDE_DIRS}
         ${catkin_INCLUDE_DIRS}
 )
@@ -63,6 +63,5 @@ target_link_libraries(
         spectacularAI_depthaiPlugin
         ${OpenCV_LIBRARIES}
         ${depthai_bridge_LIBRARIES}
-        ${tf2_ros_LIBRARIES}
         ${catkin_LIBRARIES}
 )

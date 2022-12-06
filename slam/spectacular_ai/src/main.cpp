@@ -3,25 +3,26 @@
 //
 #include <ros/ros.h>
 #include <geometry_msgs/TransformStamped.h>
-#include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/Odometry.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_ros/transform_listener.h>
-#include <tf2_ros/transform_broadcaster.h>
 #include <opencv2/opencv.hpp>
 #include "spectacular_ai/oakInterface.h"
 #include "spectacular_ai/ros_bridge.h"
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "spectacular_ai");
+    ros::NodeHandle nh;
 
     geometry_msgs::TransformStamped transform2map, transform2base;
-    geometry_msgs::PoseStamped pose;
-    tf2_ros::TransformBroadcaster tb;
+    nav_msgs::Odometry odom;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
     oakConfig oak_config{};
+    rosBridgeConfig ros_config{.tfPrefix="oak_front"};
     oakInterface oak("", oak_config);
-    ros_bridge bridge(rosBridgeConfig{}, oak_config, oak.readCalibration());
+    ros_bridge bridge(ros_config, oak_config, oak.readCalibration());
+    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 5);
     bridge.registerRgbQueue(oak.getRgbQueue(30));
     oak.registerImuHook(bridge.imuPublish);
     oak.registerDepthHook(bridge.depthPublish);
@@ -29,22 +30,49 @@ int main(int argc, char** argv) {
 
     ROS_INFO("VIO Start!!!");
     while(ros::ok()) {
-        transform2map.header.frame_id = "map";
-        transform2map.child_frame_id = "oak-d-base-frame";
         auto vioOut = oak.getOutput();
-        transform2base = tfBuffer.lookupTransform("oak-d-base-frame", "oak_right_camera_optical_frame", ros::Time(0));
-        transform2map.header.stamp = ros::Time::now();
         tf2::Quaternion frame2world(vioOut->pose.orientation.x, vioOut->pose.orientation.y, vioOut->pose.orientation.z, vioOut->pose.orientation.w);
-        frame2world = tf2::Quaternion(-0.5, -0.5, 0.5, 0.5) * frame2world.inverse();
-        transform2map.transform.rotation.x = frame2world.x();
-        transform2map.transform.rotation.y = frame2world.y();
-        transform2map.transform.rotation.z = -frame2world.z();
-        transform2map.transform.rotation.w = frame2world.w();
-        transform2map.transform.translation.x = -vioOut->pose.position.x;
-        transform2map.transform.translation.y = -vioOut->pose.position.y;
-        transform2map.transform.translation.z = vioOut->pose.position.z;
-        tb.sendTransform(transform2map);
-        std::cout << vioOut->asJson() << std::endl;
+        geometry_msgs::TransformStamped frame2base = tfBuffer.lookupTransform("base_link", "oak_front_right_camera_frame", ros::Time(0));
+        frame2world = tf2::Quaternion(frame2base.transform.rotation.x, frame2base.transform.rotation.y,
+                                      frame2base.transform.rotation.z, frame2base.transform.rotation.w).inverse()
+                * tf2::Quaternion(-0.5, -0.5, 0.5, 0.5) * frame2world.inverse();
+
+        std::string frame_id = "map";
+        odom.header.stamp = ros::Time::now();
+        odom.header.frame_id = frame_id;
+        odom.child_frame_id = frame_id;
+        odom.pose.pose.position.x = -vioOut->pose.position.x - frame2base.transform.translation.x;
+        odom.pose.pose.position.y = -vioOut->pose.position.y - frame2base.transform.translation.y;
+        odom.pose.pose.position.z = vioOut->pose.position.z + frame2base.transform.translation.z;
+        odom.pose.pose.orientation.x = frame2world.x();
+        odom.pose.pose.orientation.y = frame2world.y();
+        odom.pose.pose.orientation.z = -frame2world.z();
+        odom.pose.pose.orientation.w = frame2world.w();
+        odom.pose.covariance = {
+                vioOut->positionCovariance[0][0], vioOut->positionCovariance[0][1], vioOut->positionCovariance[0][2], 0, 0, 0,
+                vioOut->positionCovariance[1][0], vioOut->positionCovariance[1][1], vioOut->positionCovariance[1][2], 0, 0, 0,
+                vioOut->positionCovariance[2][0], vioOut->positionCovariance[2][1], vioOut->positionCovariance[2][2], 0, 0, 0,
+                0, 0, 0, 1e-2, 0, 0,
+                0, 0, 0, 0, 1e-2, 0,
+                0, 0, 0, 0, 0, 1e-2
+        };
+        odom.twist.twist.linear.x = vioOut->velocity.x;
+        odom.twist.twist.linear.y = vioOut->velocity.y;
+        odom.twist.twist.linear.z = -vioOut->velocity.z;
+        odom.twist.twist.angular.x = vioOut->angularVelocity.x;
+        odom.twist.twist.angular.y = vioOut->angularVelocity.y;
+        odom.twist.twist.angular.z = vioOut->angularVelocity.z;
+        odom.twist.covariance = {
+                vioOut->velocityCovariance[0][0], vioOut->velocityCovariance[0][1], vioOut->velocityCovariance[0][2], 0, 0, 0,
+                vioOut->velocityCovariance[1][0], vioOut->velocityCovariance[1][1], vioOut->velocityCovariance[1][2], 0, 0, 0,
+                vioOut->velocityCovariance[2][0], vioOut->velocityCovariance[2][1], vioOut->velocityCovariance[2][2], 0, 0, 0,
+                0, 0, 0, 1e-2, 0, 0,
+                0, 0, 0, 0, 1e-2, 0,
+                0, 0, 0, 0, 0, 1e-2
+        };
+
+        odom_pub.publish(odom);
+        std::cout << "Track Status: " << int(vioOut->status) << std::endl;
     }
 
     return 0;
