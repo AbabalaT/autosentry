@@ -9,6 +9,7 @@
 #include "spectacular_ai/ros_bridge.h"
 
 struct config_pack {
+    std::string mxId;
     oakConfig oak;
     rosBridgeConfig ros;
 };

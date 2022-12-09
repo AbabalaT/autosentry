@@ -9,6 +9,7 @@ config_pack getConfig() {
     config_pack config;
     ros::NodeHandle nh("~");
 
+    nh.getParam("mxId", config.mxId);
     nh.getParam("oak/confidence", config.oak.confidence);
     nh.getParam("oak/LRchecktresh", config.oak.LRchecktresh);
     nh.getParam("oak/lrcheck", config.oak.lrcheck);
@@ -28,6 +29,5 @@ config_pack getConfig() {
     nh.getParam("oak/angularVelCovariance", config.ros.angularVelCovariance);
     nh.getParam("oak/linearAccelCovariance", config.ros.linearAccelCovariance);
 
-    std::cout << "ttt" << config.ros.tfPrefix << config.oak.confidence << std::endl;
     return config;
 }

@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     nav_msgs::Odometry odom;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
-    oakInterface oak("", config.oak);
+    oakInterface oak(config.mxId, config.oak);
     ros_bridge bridge(config.ros, config.oak, oak.readCalibration());
     ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 5);
     bridge.registerRgbQueue(oak.getRgbQueue(30));
@@ -41,9 +41,9 @@ int main(int argc, char** argv) {
         odom.header.stamp = ros::Time::now();
         odom.header.frame_id = frame_id;
         odom.child_frame_id = frame_id;
-        odom.pose.pose.position.x = -vioOut->pose.position.x - frame2base.transform.translation.x;
-        odom.pose.pose.position.y = -vioOut->pose.position.y - frame2base.transform.translation.y;
-        odom.pose.pose.position.z = vioOut->pose.position.z + frame2base.transform.translation.z;
+        odom.pose.pose.position.x = -vioOut->pose.position.x ;
+        odom.pose.pose.position.y = -vioOut->pose.position.y;
+        odom.pose.pose.position.z = vioOut->pose.position.z;
         odom.pose.pose.orientation.x = frame2world.x();
         odom.pose.pose.orientation.y = frame2world.y();
         odom.pose.pose.orientation.z = -frame2world.z();
