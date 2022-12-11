@@ -4,8 +4,7 @@
 #include <string>
 
 #include <ros/ros.h>
-//#include <nav_msgs/Odometry.h>
-#include <geometry_msgs/TwistWithCovarianceStamped.h>
+#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
 
 #include "robot_driver/serialPort.h"
@@ -14,7 +13,7 @@ ros::Publisher odomPub;
 serialPort serial_handle;
 
 message_data odometry {
-    float x, y, z;
+    float x, y, yaw;
     float vx, vy, wz;
 };
 
@@ -23,9 +22,12 @@ message_data cmd {
 };
 
 void odomCallback(odometry msg) {
-    geometry_msgs::TwistWithCovarianceStamped odom;
+    nav_msgs::Odometry odom;
     odom.header.stamp = ros::Time::now();
-    odom.header.frame_id = "base_link";
+    odom.header.frame_id = "odom";
+    odom.pose.pose.position.x = msg.x;
+    odom.pose.pose.position.y = msg.y;
+    odom.child_frame_id = "base_link";
     odom.twist.twist.linear.x = msg.vx;
     odom.twist.twist.linear.y = msg.vy;
     odom.twist.twist.angular.z = msg.wz;
@@ -55,7 +57,7 @@ int main(int argc, char** argv) {
 
     nh.param<std::string>("serial_name", serial_handle.name, "/dev/ttyUSB0");
     nh.subscribe("/robot/cmd_vel", 1, cmdCallback);
-    odomPub = nh.advertise<geometry_msgs::TwistWithCovarianceStamped>("/robot/odom", 1);
+    odomPub = nh.advertise<nav_msgs::Odometry>("/robot/odom", 5);
 
     serial_handle.init();
     serial_handle.registerCallback<odometry>(0x12, odomCallback);
