@@ -5,6 +5,7 @@
     </group>
 
     <include file="$(find robot_model)/launch/urdf.launch"/>
-    <include file="$(find localize_startup)/launch/base2odom.launch" />
+    <include file="$(find localize_startup)/launch/start.launch" />
     <include file="$(find depth2scan)/launch/both.launch" />
+    <include file="$(find project2plane)/launch/both.launch" />
 </launch>

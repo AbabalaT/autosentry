@@ -13,8 +13,8 @@ ros::Publisher odomPub;
 serialPort serial_handle;
 
 message_data odometry {
-    float x, y, yaw;
-    float vx, vy, wz;
+    int16_t x, y, yaw;
+    int16_t vx, vy, wz;
 };
 
 message_data cmd {
@@ -25,12 +25,12 @@ void odomCallback(odometry msg) {
     nav_msgs::Odometry odom;
     odom.header.stamp = ros::Time::now();
     odom.header.frame_id = "odom";
-    odom.pose.pose.position.x = msg.x;
-    odom.pose.pose.position.y = msg.y;
+    odom.pose.pose.position.x = msg.x / 1000.;
+    odom.pose.pose.position.y = msg.y / 1000.;
     odom.child_frame_id = "base_link";
-    odom.twist.twist.linear.x = msg.vx;
-    odom.twist.twist.linear.y = msg.vy;
-    odom.twist.twist.angular.z = msg.wz;
+    odom.twist.twist.linear.x = msg.vx / 1000.;
+    odom.twist.twist.linear.y = msg.vy / 1000.;
+    odom.twist.twist.angular.z = msg.wz / 1000.;
     odom.twist.covariance = {
             1e-2, 0, 0, 0, 0, 0,
             0, 1e-2, 0, 0, 0, 0,
@@ -44,9 +44,9 @@ void odomCallback(odometry msg) {
 
 void cmdCallback(const geometry_msgs::Twist::ConstPtr &msg) {
     cmd c {
-        .vx = (int16_t)(msg->linear.x * 100),
-        .vy = (int16_t)(msg->linear.y * 100),
-        .wz = (int16_t)(msg->angular.z * 100)
+        .vx = (int16_t)(msg->linear.x * 1000),
+        .vy = (int16_t)(msg->linear.y * 1000),
+        .wz = (int16_t)(msg->angular.z * 1000)
     };
     serial_handle.sendMsg(0x82, c);
 }
