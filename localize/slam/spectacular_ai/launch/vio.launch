@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="tf_prefix" default="oak_front"/>
+    <arg name="enable_point_cloud" default="false"/>
     <arg name="mxId" default=""/>
 
     <node pkg="spectacular_ai" type="spectacular_ai_node" name="$(arg tf_prefix)_vio" output="screen">
@@ -9,19 +10,21 @@
         <param name="mxId" value="$(arg mxId)" type="str"/>
     </node>
 
-    <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_nodelet_manager" args="manager" output="screen"/>
+    <group if="$(eval arg('enable_point_cloud') == true)">
+        <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_nodelet_manager" args="manager" output="screen"/>
 
-    <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_depth_image_convertion_nodelet"
-          args="load depth_image_proc/convert_metric $(arg tf_prefix)_nodelet_manager">
-        <remap from="image_raw" to="/$(arg tf_prefix)_vio/depth"/>
-        <remap from="image" to="/$(arg tf_prefix)_vio/depth/image"/>
-    </node>
+        <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_depth_image_convertion_nodelet"
+              args="load depth_image_proc/convert_metric $(arg tf_prefix)_nodelet_manager">
+            <remap from="image_raw" to="/$(arg tf_prefix)_vio/depth"/>
+            <remap from="image" to="/$(arg tf_prefix)_vio/depth/image"/>
+        </node>
 
-    <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_depth_image_to_pointcloud"
-          args="load depth_image_proc/point_cloud_xyz $(arg tf_prefix)_nodelet_manager">
-        <remap from="camera_info" to="/$(arg tf_prefix)_vio/depth/camera_info"/>
-        <remap from="image_rect" to="/$(arg tf_prefix)_vio/depth/image"/>
-        <remap from="points" to="/$(arg tf_prefix)_vio/points"/>
-    </node>
+        <node pkg="nodelet" type="nodelet" name="$(arg tf_prefix)_depth_image_to_pointcloud"
+              args="load depth_image_proc/point_cloud_xyz $(arg tf_prefix)_nodelet_manager">
+            <remap from="camera_info" to="/$(arg tf_prefix)_vio/depth/camera_info"/>
+            <remap from="image_rect" to="/$(arg tf_prefix)_vio/depth/image"/>
+            <remap from="points" to="/$(arg tf_prefix)_vio/points"/>
+        </node>
+    </group>
 
 </launch>

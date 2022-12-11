@@ -1,10 +1,5 @@
 <launch>
-    <arg name="enableRviz" default="true"/>
-    <group if="$(eval arg('enableRviz') == true)">
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find spectacular_ai)/rviz/odom.rviz"/>
-    </group>
 
-    <include file="$(find robot_model)/launch/urdf.launch"/>
     <include file="$(find spectacular_ai)/launch/main.launch" />
 
     <node pkg="robot_localization" type="ekf_localization_node"

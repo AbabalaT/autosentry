@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find depth2scan)/launch/d2s.launch">
+        <arg name="tf_prefix" value="oak_front" />
+    </include>
+<!--    <include file="$(find depth2scan)/launch/d2s.launch">-->
+<!--        <arg name="tf_prefix" value="oak_back" />-->
+<!--    </include>-->
+</launch>
