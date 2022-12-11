@@ -1,0 +1,8 @@
+<launch>
+
+    <include file="$(find spectacular_ai)/launch/vio.launch">
+        <arg name="tf_prefix" value="oak_front"/>
+        <arg name="mxId" value="184430107108351300"/>
+    </include>
+
+</launch>

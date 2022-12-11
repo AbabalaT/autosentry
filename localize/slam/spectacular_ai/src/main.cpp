@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
                                       frame2base.transform.rotation.z, frame2base.transform.rotation.w).inverse()
                 * tf2::Quaternion(-0.5, -0.5, 0.5, 0.5) * frame2world.inverse();
 
-        std::string frame_id = "map";
+        std::string frame_id = "odom";
         odom.header.stamp = ros::Time::now();
         odom.header.frame_id = frame_id;
         odom.child_frame_id = frame_id;

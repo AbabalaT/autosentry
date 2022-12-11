@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /PointCloud21/Status1
         - /Odometry1
       Splitter Ratio: 0.443502813577652
     Tree Height: 347
@@ -138,7 +137,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -199,4 +198,4 @@ Window Geometry:
     collapsed: false
   Width: 1280
   X: 594
-  Y: 1322
+  Y: 1293
