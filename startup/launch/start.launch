@@ -8,4 +8,5 @@
     <include file="$(find localize_startup)/launch/start.launch" />
     <include file="$(find depth2scan)/launch/both.launch" />
     <include file="$(find project2plane)/launch/both.launch" />
+    <include file="$(find move_controller)/launch/move_base.launch" />
 </launch>
