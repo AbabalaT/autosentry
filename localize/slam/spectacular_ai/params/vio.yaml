@@ -18,4 +18,4 @@ vio:
   # Native options: 100, 200, 400, 1000
   gyroFrequencyHz: 400
   # valid options: 400p, 720p, 800p
-  inputResolution: "800p"
+  inputResolution: "400p"
