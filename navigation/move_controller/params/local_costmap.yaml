@@ -10,8 +10,8 @@ local_costmap:
   rolling_window: false
   #参数是用来设置在机器人移动过程中是否可以需要滚动窗口以保持机器人在中心位置
 
-  width: 6.0
-  height: 6.0
+  width: 4.0
+  height: 4.0
   resolution: 0.01
   #这三个参数分别设置代价地图的长（米）高（米）和分辨率（米/格）虽然分辨率设置和静态地图的不同，但是一般条件下是相同的
 
