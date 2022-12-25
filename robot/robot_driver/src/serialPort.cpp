@@ -14,7 +14,7 @@ using std::cout, std::endl;
 bool serialPort::init() {
     if (name.empty()) {
         serial.setPort("/dev/ttyUSB0");
-        serial.setBaudrate(230400);
+        serial.setBaudrate(115200);
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         serial.setTimeout(to);
         serial.open();
