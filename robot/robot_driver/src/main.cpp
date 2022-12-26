@@ -61,6 +61,6 @@ int main(int argc, char** argv) {
 
     serial_handle.init();
     serial_handle.registerCallback<odometry>(0x12, odomCallback);
-
+    ROS_INFO("Spin start!");
     ros::spin();
 }
