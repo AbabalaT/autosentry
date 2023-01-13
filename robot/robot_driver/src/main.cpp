@@ -2,7 +2,7 @@
 // Created by bismarck on 12/11/22.
 //
 #include <string>
-
+#include <iostream>
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Twist.h>
@@ -13,8 +13,8 @@ ros::Publisher odomPub;
 serialPort serial_handle;
 
 message_data odometry {
-    int16_t x, y, yaw;
-    int16_t vx, vy, wz;
+    int x, y, yaw;
+    int vx, vy, wz;
 };
 
 message_data cmd {
@@ -22,6 +22,7 @@ message_data cmd {
 };
 
 void odomCallback(odometry msg) {
+    std::cout<<"Receive a frame of odom information!"<< std::endl;
     nav_msgs::Odometry odom;
     odom.header.stamp = ros::Time::now();
     odom.header.frame_id = "odom";
@@ -39,6 +40,9 @@ void odomCallback(odometry msg) {
             0, 0, 0, 0, 1e-2, 0,
             0, 0, 0, 0, 0, 1e-2
     };
+//    std::cout<<odom.pose.pose.position.x<<" "<<odom.pose.pose.position.y<<" "
+//            <<odom.twist.twist.linear.x<<" "<<odom.twist.twist.linear.y<<" "
+//                    <<odom.twist.twist.angular.z<<" "<<std::endl;
     odomPub.publish(odom);
 }
 

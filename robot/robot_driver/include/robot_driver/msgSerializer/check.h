@@ -5,7 +5,7 @@
 #ifndef MSG_SERIALIZE_CHECK_H
 #define MSG_SERIALIZE_CHECK_H
 
-#define checkFunc sumCheck
+#define checkFunc crc8check
 const int checkSize = 1;
 
 #include <cstdint>
@@ -31,7 +31,7 @@ static const uint8_t crc_table[] =
         };//生成表对应多项式：0x31
 
 static uint8_t crc8check(const uint8_t *data, int length) {
-    uint8_t crc = 0x00;
+    uint8_t crc = 0xFF;
     while (length--) {
         crc = crc_table[crc ^ *data++];
     }

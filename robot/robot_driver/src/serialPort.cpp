@@ -30,7 +30,10 @@ bool serialPort::init() {
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         serial.setTimeout(to);
         serial.open();
-
+        if (!listenerThread.joinable()) {
+            listenerThread = std::thread(&serialPort::loop, this);
+        }else{
+        }
     }
 
     //检测串口是否已经打开，并给出提示信息
@@ -48,12 +51,6 @@ serialPort::serialPort(std::string _name) {
     name = std::move(_name);
     init();
     cout<<"init success!"<<endl;
-    if (!listenerThread.joinable()) {
-        listenerThread = std::thread(&serialPort::loop, this);
-        cout<<"000000000000000"<<endl;
-    }else{
-        cout<<"111111111111111"<<endl;
-    }
 }
 
 serialPort::~serialPort() {
@@ -66,11 +63,9 @@ void serialPort::loop() {
     std::cout << "listener thread start" << std::endl;
     while (ros::ok()) {
         uint8_t data;
-        cout<<"A Loop!"<<endl;
         try {
             serial.read(&data, 1);
             listener.append(*(char*)&data);
-            std::cout << "receive a byte!" << std::endl;
         } catch (serial::IOException &e) {
             init();
             std::cout << "serial read error" << std::endl;

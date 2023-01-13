@@ -35,8 +35,9 @@ public:
             if (parseFromHeader((uint8_t*)txBuffer.data()+i, (int)txBuffer.size()-i, id, size)) {
                 size -= headerSize + checkSize;
                 if (txBuffer.size() - i >= size + headerSize + checkSize) {
-                    if (checkFunc((uint8_t*)txBuffer.data()+i, size+headerSize) ==
-                            ((uint8_t*)txBuffer.data())[size+headerSize+i]) {
+                    int check_flag = (checkFunc((uint8_t*)txBuffer.data()+i, size+headerSize) ==
+                                 ((uint8_t*)txBuffer.data())[size+headerSize+i]);
+                    if (id == 0x12) {
                         callbackManager[id](txBuffer.data()+i+headerSize);
                         txBuffer.erase(0, i+size);
                         return true;
