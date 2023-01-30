@@ -1,0 +1,10 @@
+obstacle_range: 2.5     # 障碍物识别距离
+raytrace_range: 3.0     # 障碍物清除距离
+robot_radius: 0.2
+inflation_radius: 0.1
+track_unknown_space: true
+
+observation_sources: laser_scan_front laser_scan_back
+
+laser_scan_front: {data_type: LaserScan, topic: /plane/front_scan, marking: true, clearing: true}
+laser_scan_back: {data_type: LaserScan, topic: /plane/back_scan, marking: true, clearing: true}

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <group ns="robot">
+        <param name="robot_description"
+               command="$(find xacro)/xacro '$(find robot_model)/urdf/robot.urdf.xacro' prefix:=''"/>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+              output="screen" required="true">
+        </node>
+    </group>
+
+    <group ns="plane_robot">
+        <param name="robot_description"
+               command="$(find xacro)/xacro '$(find robot_model)/urdf/robot.urdf.xacro' prefix:='plane_'"/>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+              output="screen" required="true">
+        </node>
+    </group>
+</launch>

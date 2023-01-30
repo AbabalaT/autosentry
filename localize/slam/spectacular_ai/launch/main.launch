@@ -1,0 +1,15 @@
+<launch>
+
+    <include file="$(find spectacular_ai)/launch/vio.launch">
+        <arg name="tf_prefix" value="oak_front"/>
+        <arg name="enable_point_cloud" value="false"/>
+        <arg name="mxId" value="184430107108351300"/>
+    </include>
+
+<!--    <include file="$(find spectacular_ai)/launch/vio.launch">-->
+<!--        <arg name="tf_prefix" value="oak_back"/>-->
+<!--        <arg name="enable_point_cloud" value="false"/>-->
+<!--        <arg name="mxId" value=""/>-->
+<!--    </include>-->
+
+</launch>

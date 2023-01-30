@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="robot_driver" type="robot_driver_node" name="robot_driver" output="screen">
+        <param name="serial_name" value="/dev/ttyUSB0"/>
+    </node>
+</launch>

@@ -1,0 +1,12 @@
+<launch>
+    <node pkg="project2plane" type="project2plane_node" name="front_laser_project" output="screen" respawn="true">
+        <param name="publish_tf" value="true"/>
+        <remap from="scan" to="/oak_front_vio/scan" />
+        <remap from="projected_scan" to="/plane/front_scan" />
+    </node>
+    <node pkg="project2plane" type="project2plane_node" name="back_laser_project" output="screen" respawn="true">
+        <param name="publish_tf" value="false"/>
+        <remap from="scan" to="/oak_back_vio/scan" />
+        <remap from="projected_scan" to="/plane/back_scan" />
+    </node>
+</launch>

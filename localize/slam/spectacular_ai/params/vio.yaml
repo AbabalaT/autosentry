@@ -1,0 +1,21 @@
+oak:
+  confidence: 200
+  LRchecktresh: 5
+  lrcheck: true
+  extended: false
+  subpixel: true
+  # 1080P: 1920 × 1080
+  # 4K: 3840 × 2160
+  # 12MP: 4056 × 3040
+  colorResolution: "1080P"
+  angularVelCovariance: 0.0001
+  linearAccelCovariance: 0.001
+
+vio:
+  fastImu: false
+  # Native options: 125, 250, 500
+  accFrequencyHz: 500
+  # Native options: 100, 200, 400, 1000
+  gyroFrequencyHz: 400
+  # valid options: 400p, 720p, 800p
+  inputResolution: "400p"

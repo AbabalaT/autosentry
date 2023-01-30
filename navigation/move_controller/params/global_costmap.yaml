@@ -1,0 +1,21 @@
+global_costmap:
+  global_frame: map
+  #用来表示全局代价地图需要在哪个参考系下运行，这里选择了map参考系
+
+  robot_base_frame: plane_base_link
+  #参数用来表示代价地图可以参考的机器人本体的坐标系
+
+  update_frequency: 3.0
+  #参数用来决定全局地图信息更新的频率，单位是Hz
+  old_navfn_behavior: false
+  # 若在某些情况下,想让global_planner完全复制navfn的功能,那就设置为true,但是需要注意navfn是非常旧的ROS系统中使用的,现在已经都用global_planner代替navfn了,所以不建议设置为true.
+
+  publish_frequency: 2.0
+
+  static_map: true
+  #参数用来决定代价地图是否需要根据map_server提供的地图信息进行初始化，如果不需要使用已有的地图这最好设置为false
+
+  rolling_window: false
+  resolution: 0.05            #分辨率
+  transform_tolerance: 5    #转换容忍
+  map_type: costmap           #地图类型
