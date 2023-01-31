@@ -16,23 +16,27 @@ ros::Publisher pub;
 bool publish_tf = false;
 
 void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+
     static tf2_ros::Buffer tfBuffer;
+    ROS_WARN("Flag1");
     static tf2_ros::TransformListener tfListener(tfBuffer);
+    ROS_WARN("Flag0");
     static tf2_ros::TransformBroadcaster br;
     sensor_msgs::LaserScan new_msg = *msg;
 
     geometry_msgs::TransformStamped laser2base, base2map;
     try {
         base2map = tfBuffer.lookupTransform("map", "base_link", ros::Time(0));
+        //ROS_WARN("Get TF");
     }
     catch (tf2::TransformException &ex) {
-        ROS_WARN("%s", ex.what());
+
         return;
     }
 
     tf2::Quaternion b2m{base2map.transform.rotation.x, base2map.transform.rotation.y,
                         base2map.transform.rotation.z, base2map.transform.rotation.w};
-    double roll, pitch, yaw;
+    double roll = 0, pitch = 0, yaw = 0;
     tf2::Matrix3x3(b2m).getRPY(roll, pitch, yaw);
 
     if (publish_tf) {
@@ -50,11 +54,12 @@ void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
     }
 
     for (auto& it: new_msg.ranges) {
-        it *= cos(pitch);
+        it = it * cos(pitch);
     }
 
     new_msg.header.frame_id = "plane_" + new_msg.header.frame_id;
     pub.publish(new_msg);
+
 }
 
 int main(int argc, char** argv) {
@@ -62,9 +67,10 @@ int main(int argc, char** argv) {
     ros::NodeHandle pnh("~");
     pnh.param<bool>("publish_tf", publish_tf, false);
 
-    ros::Subscriber sub = pnh.subscribe("/scan", 1, laserCallback);
+    auto sub = pnh.subscribe("/scan", 100, laserCallback);
     pub = pnh.advertise<sensor_msgs::LaserScan>("/projected_scan", 1);
-
-    ros::spin();
+    while(1){
+        ros::spinOnce();
+    }
     return 0;
 }

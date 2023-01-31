@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
         };
 
         odom_pub.publish(odom);
-        std::cout << "Track Status: " << int(vioOut->status) << std::endl;
+        //std::cout << "Track Status: " << int(vioOut->status) << std::endl;
     }
 
     return 0;

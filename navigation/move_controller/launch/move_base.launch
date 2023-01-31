@@ -7,7 +7,7 @@
         <rosparam file="$(find move_controller)/params/local_costmap.yaml" command="load" />
         <rosparam file="$(find move_controller)/params/global_costmap.yaml" command="load" />
         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
-        <rosparam file="$(find move_controller)/params/teb_local_planner.yaml" command="load" />
-<!--        <rosparam file="$(find move_controller)/params/base_local_planner.yaml" command="load" />-->
+<!--        <rosparam file="$(find move_controller)/params/teb_local_planner.yaml" command="load" />-->
+        <rosparam file="$(find move_controller)/params/base_local_planner.yaml" command="load" />
     </node>
 </launch>
