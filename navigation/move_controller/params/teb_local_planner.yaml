@@ -11,16 +11,16 @@ TebLocalPlannerROS:
   global_plan_overwrite_orientation: True
   allow_init_with_backwards_motion: True
   max_global_plan_lookahead_dist: 3.5 # 3.0 3.5
-  global_plan_viapoint_sep: 0.05 # -1 0.05
-  global_plan_prune_distance: 1.5
+  global_plan_viapoint_sep: -1 # -1 0.05
+  global_plan_prune_distance: 1
   exact_arc_length: True
-  feasibility_check_no_poses: 1
+  feasibility_check_no_poses: 2
   publish_feedback: False
 
   # Robot
 
   max_vel_x: 1
-  max_vel_x_backwards: 0.7
+  max_vel_x_backwards: 0.2
   max_vel_y: 1
   max_vel_theta: 1.5 # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
   acc_lim_x: 2
@@ -70,13 +70,13 @@ TebLocalPlannerROS:
   optimization_verbose: False
   penalty_epsilon: 0.1
   obstacle_cost_exponent: 4
-  weight_max_vel_x: 100 #1
+  weight_max_vel_x: 10 #1
   weight_max_vel_theta: 1
   weight_acc_lim_x: 10 #1
   weight_acc_lim_theta: 1 #1
   weight_kinematics_nh: 1000
   weight_kinematics_forward_drive: 1000
-  weight_kinematics_turning_radius: 1
+  weight_kinematics_turning_radius: 500
   weight_optimaltime: 10 # must be > 0
   weight_shortest_path: 0
   weight_obstacle: 200 # 100
@@ -88,11 +88,11 @@ TebLocalPlannerROS:
 
   # Homotopy Class Planner
 
-  enable_homotopy_class_planning: False
+  enable_homotopy_class_planning: True
   enable_multithreading: True
-  max_number_classes: 2
+  max_number_classes: 3
   selection_cost_hysteresis: 1.0
-  selection_prefer_initial_plan: 0.95
+  selection_prefer_initial_plan: 0.9
   selection_obst_cost_scale: 1.0
   selection_alternative_time_cost: False
 

@@ -50,17 +50,18 @@ void odomCallback(odometry msg) {
 }
 
 void cmdCallback(const geometry_msgs::Twist::ConstPtr &msg) {
-    std::cout<<"receive a control speed!"<<std::endl;
+//    std::cout<<"receive a control speed!"<<std::endl;
     cmd c {
         .vx = (int16_t)(msg->linear.x * 1000),
         .vy = (int16_t)(msg->linear.y * 1000),
         .wz = (int16_t)(msg->angular.z * 1000)
     };
-    std::cout<<std::dec
-        <<c.vx<<" "
-        <<c.vy<<" "
-        <<c.wz<<std::endl;
-    serial_handle.sendMsg(0x82, c);
+//    ROS_INFO_STREAM("vx:" <<c.vx <<" vy:" << c.vy << " wz:" << c.wz);
+//    std::cout<<std::dec
+//        <<c.vx<<" "
+//        <<c.vy<<" "
+//        <<c.wz<<std::endl;
+//    serial_handle.sendMsg(0x82, c);
 }
 
 int main(int argc, char** argv) {

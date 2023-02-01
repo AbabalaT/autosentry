@@ -1,6 +1,7 @@
 //
 // Created by bismarck on 12/11/22.
 //
+#define USE_CUSTOM_LASER2SCAN
 
 #include <cmath>
 
@@ -12,25 +13,25 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/transform_broadcaster.h>
 
+#include <image_transport/image_transport.h>
+#include <opencv2/highgui/highgui.hpp>
+#include <cv_bridge/cv_bridge.h>
+
 ros::Publisher pub;
 bool publish_tf = false;
 
-void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
+bool callbacked_flag = false;
+tf2_ros::Buffer tfBuffer;
 
-    static tf2_ros::Buffer tfBuffer;
-    ROS_WARN("Flag1");
-    static tf2_ros::TransformListener tfListener(tfBuffer);
-    ROS_WARN("Flag0");
-    static tf2_ros::TransformBroadcaster br;
+void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
     sensor_msgs::LaserScan new_msg = *msg;
-
+    static tf2_ros::TransformBroadcaster br;
     geometry_msgs::TransformStamped laser2base, base2map;
     try {
         base2map = tfBuffer.lookupTransform("map", "base_link", ros::Time(0));
-        //ROS_WARN("Get TF");
     }
     catch (tf2::TransformException &ex) {
-
+        ROS_WARN("Project2Scan Get TF ERROR!");
         return;
     }
 
@@ -52,25 +53,37 @@ void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg) {
         trans.transform.translation.z = 0;
         br.sendTransform(trans);
     }
-
-    for (auto& it: new_msg.ranges) {
+    for (auto &it: new_msg.ranges) {
         it = it * cos(pitch);
     }
-
     new_msg.header.frame_id = "plane_" + new_msg.header.frame_id;
     pub.publish(new_msg);
 
 }
 
-int main(int argc, char** argv) {
+void depth_img_callback(const sensor_msgs::ImageConstPtr& msg){
+    cv::Mat cv_img0 =  cv_bridge::toCvCopy(msg, "16UC1")->image;
+    cv::imshow("depth", cv_img0);
+    cv::waitKey(1);
+    /*
+    sensor_msgs::LaserScan new_msg;
+    。。。处理深度图到扫瞄。。。
+    。。。投影转平面。。。
+    */
+}
+
+int main(int argc, char **argv) {
     ros::init(argc, argv, "laser_projection");
     ros::NodeHandle pnh("~");
     pnh.param<bool>("publish_tf", publish_tf, false);
-
-    auto sub = pnh.subscribe("/scan", 100, laserCallback);
+    tf2_ros::TransformListener tfListener(tfBuffer);
+//#ifndef USE_CUSTOM_LASER2SCAN
+    auto sub1 = pnh.subscribe("/scan", 100, laserCallback);
+//#else
+    //auto sub2 = pnh.subscribe("/depth_image", 100, depth_img_callback);
+//#endif
     pub = pnh.advertise<sensor_msgs::LaserScan>("/projected_scan", 1);
-    while(1){
-        ros::spinOnce();
-    }
+    ros::spin();
+//    cv::destroyWindow("depth");
     return 0;
 }

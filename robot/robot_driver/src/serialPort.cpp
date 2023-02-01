@@ -39,7 +39,7 @@ bool serialPort::init() {
 
     //检测串口是否已经打开，并给出提示信息
     if (serial.isOpen()) {
-        cout << "Serial Port initialized OH YE!" << endl;
+        cout << "Serial Port initialized!" << endl;
         return true;
     } else {
         cout << "Unable to open port " << endl;

@@ -8,6 +8,8 @@ find_package(
         sensor_msgs
         tf2
         tf2_ros
+        OpenCV
+        cv_bridge
 )
 
 catkin_package(

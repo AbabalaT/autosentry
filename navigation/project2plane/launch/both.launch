@@ -1,6 +1,7 @@
 <launch>
     <node pkg="project2plane" type="project2plane_node" name="front_laser_project" output="screen" respawn="true">
         <param name="publish_tf" value="true"/>
+        <remap from="depth_image" to="/oak_front_vio/depth"/>
         <remap from="scan" to="/oak_front_vio/scan" />
         <remap from="projected_scan" to="/plane/front_scan" />
     </node>

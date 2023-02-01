@@ -10,12 +10,12 @@ global_costmap:
   old_navfn_behavior: false
   # 若在某些情况下,想让global_planner完全复制navfn的功能,那就设置为true,但是需要注意navfn是非常旧的ROS系统中使用的,现在已经都用global_planner代替navfn了,所以不建议设置为true.
 
-  publish_frequency: 2.0
+  publish_frequency: 3.0
 
   static_map: true
   #参数用来决定代价地图是否需要根据map_server提供的地图信息进行初始化，如果不需要使用已有的地图这最好设置为false
 
   rolling_window: false
-  resolution: 0.01            #分辨率
+  resolution: 0.05            #分辨率
   transform_tolerance: 1    #转换容忍
   map_type: costmap           #地图类型
