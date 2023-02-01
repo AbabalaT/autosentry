@@ -40,6 +40,17 @@ int main(int argc, char** argv) {
             "imu");
 
     imuPublish.addPublisherCallback();
+    if(device.setIrLaserDotProjectorBrightness(700.0, -1)){
+        ROS_WARN("Turn ON IR Laser Success！");
+        ROS_WARN("Turn ON IR Laser Success！");
+        ROS_WARN("Turn ON IR Laser Success！");
+        ROS_WARN("Turn ON IR Laser Success！");
+    }else{
+        ROS_WARN("Turn ON IR Laser Fail！");
+        ROS_WARN("Turn ON IR Laser Fail！");
+        ROS_WARN("Turn ON IR Laser Fail！");
+        ROS_WARN("Turn ON IR Laser Fail！");
+    }
 
     ros::spin();
 

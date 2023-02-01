@@ -79,12 +79,12 @@ Visualization Manager:
       Name: PointCloud2
       Position Transformer: XYZ
       Queue Size: 10
-      Selectable: true
+      Selectable: false
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /oak_front_vio/points
-      Unreliable: false
+      Topic: /oak_front_vio/depth/points
+      Unreliable: true
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
@@ -266,7 +266,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: true
       Max Color: 204; 0; 0
       Min Color: 164; 0; 0
@@ -281,7 +281,7 @@ Visualization Manager:
       Unreliable: true
       Use Fixed Frame: true
       Use rainbow: false
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -311,7 +311,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -0.09499917179346085
+      Angle: 0
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -321,11 +321,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 101.47005462646484
+      Scale: 39.42204666137695
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 2.5832431316375732
-      Y: 1.1211849451065063
+      X: 0.33380308747291565
+      Y: 1.0088913440704346
     Saved: ~
 Window Geometry:
   Displays:

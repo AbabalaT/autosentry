@@ -53,10 +53,19 @@ void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
         trans.transform.translation.z = 0;
         br.sendTransform(trans);
     }
+    float theta = new_msg.angle_min;
     for (auto &it: new_msg.ranges) {
-        it = it * cos(pitch);
+        it = it * cos(pitch*cos(theta));
+        theta = theta + new_msg.angle_increment;
     }
+    //ROS_INFO("Start Angle: %f, End Angle: %f", new_msg.angle_min, new_msg.angle_max);
     new_msg.header.frame_id = "plane_" + new_msg.header.frame_id;
+    for(int i = 0; i<10; i=i+1){
+        new_msg.ranges[i]=0.0;
+    }
+    for(int i = 631; i<640; i=i+1){
+        new_msg.ranges[i]=0.0;
+    }
     pub.publish(new_msg);
 
 }

@@ -56,6 +56,7 @@ oakInterface::oakInterface(const std::string& mxId, const oakConfig& oak_config)
         throw std::runtime_error("DepthAI Device with MxId  \"" + mxId + "\" not found.  \"");
     }
     ROS_INFO("Device USB status: %s", usbStrings[static_cast<int32_t>(device->getUsbSpeed())].c_str());
+
 }
 
 void oakInterface::registerImuHook(const std::function<void(std::shared_ptr<dai::IMUData>)>& imuHook) {
@@ -64,6 +65,21 @@ void oakInterface::registerImuHook(const std::function<void(std::shared_ptr<dai:
 
 void oakInterface::registerDepthHook(const std::function<void(std::shared_ptr<dai::ImgFrame>)>& imgHook) {
     vioPipeline->hooks.depth = imgHook;
+}
+
+void oakInterface::set_IR_project(float mA){
+    bool result = device -> setIrLaserDotProjectorBrightness(mA, -1);
+    if(result){
+        ROS_WARN("IR Laser Set Success!");
+        ROS_WARN("IR Laser Set Success!");
+        ROS_WARN("IR Laser Set Success!");
+        ROS_WARN("IR Laser Set Success!");
+    }else{
+        ROS_WARN("IR Laser Set Fail!");
+        ROS_WARN("IR Laser Set Fail!");
+        ROS_WARN("IR Laser Set Fail!");
+        ROS_WARN("IR Laser Set Fail!");
+    }
 }
 
 std::shared_ptr<dai::DataOutputQueue> oakInterface::getRgbQueue(int maxSize, bool blocking) {

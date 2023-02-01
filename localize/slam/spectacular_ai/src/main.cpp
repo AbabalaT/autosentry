@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
     bridge.registerRgbQueue(oak.getRgbQueue(30));
     oak.registerImuHook(bridge.imuPublish);
     oak.registerDepthHook(bridge.depthPublish);
+    oak.set_IR_project(700.0);
     oak.start();
 
     ROS_INFO("VIO Start!!!");
@@ -74,6 +75,6 @@ int main(int argc, char** argv) {
         odom_pub.publish(odom);
         //std::cout << "Track Status: " << int(vioOut->status) << std::endl;
     }
-
+    oak.set_IR_project(0.0);
     return 0;
 }
