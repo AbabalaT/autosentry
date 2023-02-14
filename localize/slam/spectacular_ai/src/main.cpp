@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     bridge.registerRgbQueue(oak.getRgbQueue(30));
     oak.registerImuHook(bridge.imuPublish);
     oak.registerDepthHook(bridge.depthPublish);
-    oak.set_IR_project(1000.0);
+    //oak.set_IR_project(1000.0);
     oak.start();
 
     ROS_INFO("VIO Start!!!");

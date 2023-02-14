@@ -19,7 +19,7 @@ TebLocalPlannerROS:
 
   # Robot
 
-  max_vel_x: 1
+  max_vel_x: 1.2
   max_vel_x_backwards: 0.2
   max_vel_y: 1
   max_vel_theta: 1.5 # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
@@ -34,28 +34,28 @@ TebLocalPlannerROS:
 
   footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
     type: "circular"
-    radius: 0.2 # for type "circular"
+    radius: 0.3 # for type "circular"
 #    line_start: [-0.3, 0.0] # for type "line"
 #    line_end: [0.3, 0.0] # for type "line"
 
 
   # GoalTolerance
 
-  xy_goal_tolerance: 0.2
-  yaw_goal_tolerance: 0.1
+  xy_goal_tolerance: 1
+  yaw_goal_tolerance: 1
   free_goal_vel: True # False
   complete_global_plan: True
 
   # Obstacles
 
-  min_obstacle_dist: 0.4 # This value must also include our robot's expansion, since footprint_model is set to "line".
+  min_obstacle_dist: 0.2 # This value must also include our robot's expansion, since footprint_model is set to "line".
   inflation_dist: 0.6 #0.6
   include_costmap_obstacles: True
   legacy_obstacle_association: False
   costmap_obstacles_behind_robot_dist: 1.0
   obstacle_poses_affected: 30 #15
 
-  dynamic_obstacle_inflation_dist: 0.6
+  dynamic_obstacle_inflation_dist: 0.3
   include_dynamic_obstacles: True
 
   costmap_converter_plugin: ""
@@ -76,7 +76,7 @@ TebLocalPlannerROS:
   weight_acc_lim_theta: 1 #1
   weight_kinematics_nh: 1000
   weight_kinematics_forward_drive: 1000
-  weight_kinematics_turning_radius: 500
+  weight_kinematics_turning_radius: 300
   weight_optimaltime: 10 # must be > 0
   weight_shortest_path: 0
   weight_obstacle: 200 # 100
