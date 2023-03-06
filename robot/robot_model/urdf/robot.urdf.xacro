@@ -7,12 +7,11 @@
     <link name="$(arg prefix)base_link"/>
     <xacro:depthai_camera camera_name = "$(arg prefix)oak_front" parent = "$(arg prefix)base_link"
                           base_frame = "$(arg prefix)oak_front_frame"
-                          cam_pos_x = "0.5" cam_pos_y = "0.0" cam_pos_z = "0.0"
+                          cam_pos_x = "0.08" cam_pos_y = "0.0" cam_pos_z = "0.3"
                           cam_roll = "0.0" cam_pitch = "0.0" cam_yaw = "0.0"/>
 
     <xacro:depthai_camera camera_name = "$(arg prefix)oak_back" parent = "$(arg prefix)base_link"
                           base_frame = "$(arg prefix)oak_back_frame"
-                          cam_pos_x = "-0.5" cam_pos_y = "0.0" cam_pos_z = "0.0"
+                          cam_pos_x = "-0.08" cam_pos_y = "0.0" cam_pos_z = "0.3"
                           cam_roll = "0.0" cam_pitch = "0.0" cam_yaw = "0.0"/>
-
 </robot>

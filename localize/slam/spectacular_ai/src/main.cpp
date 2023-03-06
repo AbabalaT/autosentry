@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
                 0, 0, 0, 0, config.ros.angularVelCovariance, 0,
                 0, 0, 0, 0, 0, config.ros.angularVelCovariance
         };
-
+        //std::cout<<"Velocity:"<<odom.twist.twist.linear.x<<" "<<odom.twist.twist.linear.y<<" "<<odom.twist.twist.linear.z<<std::endl;
         odom_pub.publish(odom);
         //std::cout << "Track Status: " << int(vioOut->status) << std::endl;
     }
