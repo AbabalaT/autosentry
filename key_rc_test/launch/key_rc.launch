@@ -1,0 +1,3 @@
+<launch>
+    <node name="key_rc_test_node" pkg="key_rc_test" type="__init__.py" />
+</launch>
