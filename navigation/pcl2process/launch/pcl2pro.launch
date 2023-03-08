@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="pcl2process" type="pcl2process_node" name="PCL_OBS_Process" output="screen" respawn="true">
+        <remap from="pointcloud2_in" to="/cloud_registered_body"/>
+        <remap from="pointcloud2_out" to="/cloud_livox_obs" />
+        <remap from="hight_image" to="/obs_image" />
+    </node>
+</launch>
