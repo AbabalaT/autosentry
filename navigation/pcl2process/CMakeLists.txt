@@ -9,7 +9,7 @@ find_package(
         sensor_msgs
         cv_bridge
         pcl_ros
-#        eigen_conversions
+        eigen_conversions
 )
 #find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -24,7 +24,7 @@ catkin_package(
 include_directories(
         include
         ${catkin_INCLUDE_DIRS}
-#        ${EIGEN3_INCLUDE_DIR}
+        ${EIGEN3_INCLUDE_DIR}
         ${PCL_INCLUDE_DIRS}
 )
 

@@ -5,8 +5,8 @@ robot_radius: 0.1
 inflation_radius: 0.35
 track_unknown_space: true
 
-#observation_sources: point_cloud_livox
+observation_sources: point_cloud_livox
 
 #laser_scan_front: {data_type: LaserScan, topic: /plane/front_scan, marking: true, clearing: true}
 #laser_scan_back: {data_type: LaserScan, topic: /plane/back_scan, marking: true, clearing: true}
-#point_cloud_livox: {data_type: PointCloud2, topic: /livox/PCL2_OBS, marking: true, clearing: true}
+point_cloud_livox: {data_type: PointCloud2, topic: /cloud_livox_obs, marking: true, clearing: true}
