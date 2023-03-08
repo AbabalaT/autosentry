@@ -22,7 +22,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     std::vector <std::vector<int>> point_list1(1200);
     std::vector <PointInt> point_list2;
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud <pcl::PointXYZ>);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud <pcl::PointXYZ>);
+    //pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud <pcl::PointXYZ>);
     pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
     cv::Mat hight_map(1201, 1201, CV_8UC1, cv::Scalar(0));
     cv::Mat gradient_map(1201, 1201, CV_8UC1, cv::Scalar(0));
@@ -33,11 +33,11 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                     if (point.y > -5.8) {
                         if (point.z > -1.2) {
                             if (point.z < 1.2) {
-                                if (point.x < 0.4 and point.x > -0.4) {
-                                    if (point.y < 0.4 and point.y > -0.4) {
-                                        continue;
-                                    }
-                                }
+//                                if (point.x < 0.4 and point.x > -0.4) {
+//                                    if (point.y < 0.4 and point.y > -0.4) {
+//                                        continue;
+//                                    }
+//                                }
                                 int px = 100 * point.x + 600;
                                 int py = 100 * point.y + 600;
                                 unsigned char pz = 100 * point.z + 130;
@@ -59,11 +59,13 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
             }
         }
     }
+    pcl2cloud->points.clear();
     for (auto point: point_list2) {
         unsigned char max = 0;
         unsigned char min = 255;
-        for (int surround_point_x = (((point.p_x - 10) > 0) ? (point.p_x - 10) : 0);
-                surround_point_x < (((point.p_x + 10) < 1199) ? (point.p_x + 10) : 1199);
+        int surround_point_x = 0;
+        for (surround_point_x = ((point.p_x - 10) > 0 ? (point.p_x - 10) : 0);
+                surround_point_x < ((point.p_x + 10) < 1199 ? (point.p_x + 10) : 1199);
                 surround_point_x = surround_point_x + 1) {
             for (auto surround_point_y : point_list1[surround_point_x]) {
                 if((surround_point_y < point.p_y + 10) and (surround_point_y > point.p_y - 10)){
@@ -79,9 +81,25 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                 }
             }
         }
-        gradient_map.at<uchar>(point.p_x, point.p_y) = max - min;
+        if(point.p_x < 0.4){
+            if(point.p_x > -0.4){
+                if(point.p_y < 0.4){
+                    if(point.p_y > -0.4){
+                        continue;
+                    }
+                }
+            }
+        }
+        unsigned char point_gradient = max -min;
+        gradient_map.at<uchar>(point.p_x, point.p_y) = point_gradient;
+        pcl::PointXYZ point4push;
+        point4push.x = (point.p_x - 600) / 100;
+        point4push.y = (point.p_y - 600) / 100;
+        point4push.z = 0.0f;
+        pcl2cloud->points.push_back(point4push);
     }
-    cv::imshow("hight_map", gradient_map);
+    cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
+    cv::imshow("gradient_map", gradient_map);
     cv::waitKey(1);
     //ROS_INFO("%d",pcl2cloud->points.size());
 }
