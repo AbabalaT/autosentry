@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
     bridge.registerRgbQueue(oak.getRgbQueue(30));
     oak.registerImuHook(bridge.imuPublish);
     oak.registerDepthHook(bridge.depthPublish);
+    //oak.set_IR_project(1000.0);
     oak.start();
 
     ROS_INFO("VIO Start!!!");
@@ -36,7 +37,6 @@ int main(int argc, char** argv) {
         frame2world = tf2::Quaternion(frame2base.transform.rotation.x, frame2base.transform.rotation.y,
                                       frame2base.transform.rotation.z, frame2base.transform.rotation.w).inverse()
                 * tf2::Quaternion(-0.5, -0.5, 0.5, 0.5) * frame2world.inverse();
-
         std::string frame_id = "odom";
         odom.header.stamp = ros::Time::now();
         odom.header.frame_id = frame_id;
@@ -70,10 +70,10 @@ int main(int argc, char** argv) {
                 0, 0, 0, 0, config.ros.angularVelCovariance, 0,
                 0, 0, 0, 0, 0, config.ros.angularVelCovariance
         };
-
+        //std::cout<<"Velocity:"<<odom.twist.twist.linear.x<<" "<<odom.twist.twist.linear.y<<" "<<odom.twist.twist.linear.z<<std::endl;
         odom_pub.publish(odom);
-        std::cout << "Track Status: " << int(vioOut->status) << std::endl;
+        //std::cout << "Track Status: " << int(vioOut->status) << std::endl;
     }
-
+    oak.set_IR_project(-1.0);
     return 0;
 }

@@ -9,7 +9,8 @@
 
 #include "robot_driver//serialPort.h"
 
-using std::cout, std::endl;
+using std::cout;
+using std::endl;
 
 bool serialPort::init() {
     if (name.empty()) {
@@ -38,7 +39,7 @@ bool serialPort::init() {
 
     //检测串口是否已经打开，并给出提示信息
     if (serial.isOpen()) {
-        cout << "Serial Port initialized" << endl;
+        cout << "Serial Port initialized!" << endl;
         return true;
     } else {
         cout << "Unable to open port " << endl;

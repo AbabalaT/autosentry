@@ -42,6 +42,7 @@ public:
     explicit oakInterface(const std::string& mxId, const oakConfig& oak_config=oakConfig{});
     void registerImuHook(const std::function<void(std::shared_ptr<dai::IMUData>)>& imuHook);
     void registerDepthHook(const std::function<void(std::shared_ptr<dai::ImgFrame>)>& imgHook);
+    void set_IR_project(float mA);
     std::shared_ptr<dai::DataOutputQueue> getRgbQueue(int maxSize=5, bool blocking=false);
     std::shared_ptr<const spectacularAI::VioOutput> getOutput();
     dai::CalibrationHandler readCalibration();

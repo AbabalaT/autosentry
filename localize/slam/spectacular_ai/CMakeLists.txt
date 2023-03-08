@@ -55,7 +55,11 @@ add_executable(
         src/config.cpp
 )
 
-target_link_directories(${PROJECT_NAME}_node PRIVATE thirdparty/spectacularAI/lib)
+target_link_directories(
+        ${PROJECT_NAME}_node
+        PRIVATE
+        thirdparty/spectacularAI/lib
+)
 
 target_link_libraries(
         ${PROJECT_NAME}_node

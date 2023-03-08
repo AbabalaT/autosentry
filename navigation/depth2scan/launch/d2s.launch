@@ -4,10 +4,25 @@
         <remap from="image" to="/$(arg tf_prefix)_vio/depth"/>
         <remap from="/$(arg tf_prefix)_vio/camera_info" to="/$(arg tf_prefix)_vio/depth/camera_info"/>
         <remap from="scan" to="/$(arg tf_prefix)_vio/scan"/>
-        <param name="scan_height" type="int" value="5"/>
-        <param name="scan_time" type="double" value="0.033"/>
-        <param name="range_min" type="double" value="0.45"/>
-        <param name="range_max" type="double" value="10.0"/>
+        <param name="scan_height" type="int" value="10"/>
+        <param name="scan_time" type="double" value="0.1"/>
+        <param name="range_min" type="double" value="0.3"/>
+        <param name="range_max" type="double" value="4.0"/>
         <param name="output_frame_id" type="str" value="$(arg tf_prefix)_right_camera_frame"/>
     </node>
+
+<!--     <node pkg="nodelet" type="nodelet" name="nodelet_manager"  args="manager" output="screen"/> -->
+
+<!--     <node pkg="nodelet" type="nodelet" name="depth_image_convertion_nodelet" -->
+<!--           args="load depth_image_proc/convert_metric nodelet_manager"> -->
+<!--         <remap from="image_raw" to="/$(arg tf_prefix)_vio/depth"/> -->
+<!--         <remap from="image" to="/$(arg tf_prefix)_vio/depth/image"/> -->
+<!--     </node> -->
+
+<!--     <node pkg="nodelet" type="nodelet" name="depth_image_to_pointcloud" -->
+<!--           args="load depth_image_proc/point_cloud_xyz nodelet_manager"> -->
+<!--         <remap from="camera_info" to="/$(arg tf_prefix)_vio/depth/camera_info"/> -->
+<!--         <remap from="image_rect" to="/$(arg tf_prefix)_vio/depth/image"/> -->
+<!--         <remap from="points" to="/$(arg tf_prefix)_vio/depth/points"/> -->
+<!--     </node> -->
 </launch>

@@ -9,7 +9,7 @@
 #include <serial/serial.h>
 
 #include "msg_serialize.h"
-
+#include <iostream>
 class serialPort {
 private:
     serial::Serial serial;
@@ -29,6 +29,12 @@ public:
         std::string s = serilize(id, msg);
         try {
             serial.write(s);
+            /*在终端打印串口输出
+            auto ch_str = s.data();
+            for(int i = 0; i<11; i++)
+                std::cout<<std::hex<<(uint8_t)(ch_str[i])<<" ";
+            std::cout<<std::endl;
+             */
         } catch (serial::IOException &e) {
             init();
             std::cout << "serial write error" << std::endl;

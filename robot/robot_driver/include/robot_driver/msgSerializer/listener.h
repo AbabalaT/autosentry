@@ -29,15 +29,19 @@ public:
 
     bool append(const char c) {
         txBuffer.push_back(c);
+        //std::cout<<"Hello!"<<std::endl;
         int eraseSize = 0;
         for (int i = 0; i < (long)txBuffer.size()-headerSize-checkSize; i++) {
             int id, size;
             if (parseFromHeader((uint8_t*)txBuffer.data()+i, (int)txBuffer.size()-i, id, size)) {
                 size -= headerSize + checkSize;
                 if (txBuffer.size() - i >= size + headerSize + checkSize) {
-                    int check_flag = (checkFunc((uint8_t*)txBuffer.data()+i, size+headerSize) ==
-                                 ((uint8_t*)txBuffer.data())[size+headerSize+i]);
-                    if (id == 0x12) {
+                    //std::cout<<"Head Right!"<<" "<<id<<" "<<size<<std::endl;
+                    int check_flag = 0;
+                    check_flag = (checkFunc(((uint8_t*)txBuffer.data() + i), size+headerSize) ==
+                            ((uint8_t*)txBuffer.data())[size+headerSize+i]);
+                    if ((size == 0x18) and (id == 0x12)) {
+                        //std::cout<<std::hex<<"size == 0x1c and ..."<<std::endl;
                         callbackManager[id](txBuffer.data()+i+headerSize);
                         txBuffer.erase(0, i+size);
                         return true;
