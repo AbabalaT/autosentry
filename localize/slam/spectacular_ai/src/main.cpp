@@ -32,13 +32,11 @@ int main(int argc, char** argv) {
     ROS_INFO("VIO Start!!!");
     while(ros::ok()) {
         auto vioOut = oak.getOutput();
-        //ROS_INFO("VIO Running!!!");
         tf2::Quaternion frame2world(vioOut->pose.orientation.x, vioOut->pose.orientation.y, vioOut->pose.orientation.z, vioOut->pose.orientation.w);
         geometry_msgs::TransformStamped frame2base = tfBuffer.lookupTransform("base_link", "oak_front_right_camera_frame", ros::Time(0));
         frame2world = tf2::Quaternion(frame2base.transform.rotation.x, frame2base.transform.rotation.y,
                                       frame2base.transform.rotation.z, frame2base.transform.rotation.w).inverse()
                 * tf2::Quaternion(-0.5, -0.5, 0.5, 0.5) * frame2world.inverse();
-
         std::string frame_id = "odom";
         odom.header.stamp = ros::Time::now();
         odom.header.frame_id = frame_id;
