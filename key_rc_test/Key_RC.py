@@ -1,39 +1,67 @@
+#!/usr/bin/env python  
+# -*- coding: utf-8 -*  
+
+import os
+import sys
+import tty, termios
+import roslib
 import rospy
 from geometry_msgs.msg import Twist
-import keyboard
+from std_msgs.msg import String
 
-def callback(x):
-    buff = Twist()
-    if x.event_type == 'down' and x.name == 'w':
-        buff.linear.x=1.0
-    if x.event_type == 'down' and x.name == 's':
-        buff.linear.x=-1.0
-    if x.event_type == 'down' and x.name == 'a':
-        buff.linear.y=1.0
-    if x.event_type == 'down' and x.name == 'd':
-        buff.linear.y=-1.0
-    if x.event_type == 'down' and x.name == 'q':
-        buff.angular.z=1.0
-    if x.event_type == 'down' and x.name == 'e':
-        buff.angular.z=-1.0
-    if x.event_type == 'up' and x.name == 'w':
-        buff.linear.x=0.0
-    if x.event_type == 'up' and x.name == 's':
-        buff.linear.x=0.0
-    if x.event_type == 'up' and x.name == 'a':
-        buff.linear.y=0.0
-    if x.event_type == 'up' and x.name == 'd':
-        buff.linear.y=0.0
-    if x.event_type == 'up' and x.name == 'q':
-        buff.angular.z=0.0
-    if x.event_type == 'up' and x.name == 'e':
-        buff.angular.z=0.0
-    twist_pub.publish(buff)
-    print(buff.linear.x,buff.linear.x,buff.angular.z)
+
+def teleop_key():
+
+    thread_stop = False
+    cmd = Twist()
+    #roslib.load_manifest('smartcar_teleop')
+    pub = rospy.Publisher('/cmd_vel', Twist)
+    rospy.init_node('key_rc_test_node')
+
+    rate = rospy.Rate(rospy.get_param('~hz', 1))
+    walk_vel_ = 0.6
+    yaw_rate_ = 1
+
+    max_tv = walk_vel_
+    max_rv = yaw_rate_
+    turn = 0
+    speed = 0
+
+    while (thread_stop == False):
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try :
+            tty.setraw( fd )
+            ch = sys.stdin.read(1)
+        finally :
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        if ch == 'w':
+            max_tv = walk_vel_
+            speed = speed + 0.5
+        elif ch == 's':
+            max_tv = walk_vel_
+            speed = speed - 0.5
+        elif ch == 'a':
+            max_rv = yaw_rate_
+            turn = turn + 0.5
+        elif ch == 'd':
+            max_rv = yaw_rate_
+            turn = turn - 0.5
+        elif ch == 'p':
+            turn = 0
+            speed = 0
+            thread_stop = True
+        else:
+            turn = 0
+            speed = 0
+            max_tv = walk_vel_
+            max_rv = yaw_rate_
+
+        cmd.linear.x = speed * max_tv
+        cmd.angular.z = turn * max_rv
+        pub.publish(cmd)
+        rate.sleep()
 
 if __name__ == '__main__':
-    keyboard.hook(callback)
-    rospy.init_node('key_rc_test_node')
-    twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
-    rospy.spin()
-
+    teleop_key() 

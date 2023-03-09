@@ -22,7 +22,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     std::vector <std::vector<int>> point_list1(1200);
     std::vector <PointInt> point_list2;
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud <pcl::PointXYZ>);
-    //pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud <pcl::PointXYZ>);
+    sensor_msgs::PointCloud2 ROSPCL_output;
     pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
     cv::Mat hight_map(1201, 1201, CV_8UC1, cv::Scalar(0));
     cv::Mat gradient_map(1201, 1201, CV_8UC1, cv::Scalar(0));
@@ -60,6 +60,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
         }
     }
     pcl2cloud->points.clear();
+    unsigned int point_num = 0;
     for (auto point: point_list2) {
         unsigned char max = 0;
         unsigned char min = 255;
@@ -90,17 +91,25 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                 }
             }
         }
-        unsigned char point_gradient = max -min;
+        unsigned char point_gradient = max - min;
         gradient_map.at<uchar>(point.p_x, point.p_y) = point_gradient;
-        pcl::PointXYZ point4push;
-        point4push.x = (point.p_x - 600) / 100;
-        point4push.y = (point.p_y - 600) / 100;
-        point4push.z = 0.0f;
-        pcl2cloud->points.push_back(point4push);
+        if(point_gradient > 11){
+            pcl::PointXYZ point4push;
+            point4push.x = (float)(point.p_x - 600)/100;
+            point4push.y = (float)(point.p_y - 600)/100;
+            point4push.z = 0.0f;
+            pcl2cloud->points.push_back(point4push);
+            point_num = point_num + 1;
+        }
     }
-    cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
-    cv::imshow("gradient_map", gradient_map);
-    cv::waitKey(1);
+    pcl2cloud->width = point_num;
+    pcl2cloud->height = 1;
+    pcl2cloud->points.resize(pcl2cloud->width * pcl2cloud->height);
+    //cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
+    pcl::toROSMsg(*pcl2cloud, ROSPCL_output);
+    //cv::imshow("gradient_map", gradient_map);
+    //cv::waitKey(1);
+    pcl_publisher.publish(ROSPCL_output);
     //ROS_INFO("%d",pcl2cloud->points.size());
 }
 

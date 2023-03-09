@@ -67,7 +67,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 225
@@ -80,11 +80,11 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /cloud_registered
+      Topic: /cloud_livox_obs
       Unreliable: true
       Use Fixed Frame: true
       Use rainbow: false
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz_plugin_tutorials/Imu
       Color: 204; 51; 204
@@ -270,7 +270,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: true
+      Enabled: false
       Keep: 100
       Name: Odometry_VIO1
       Position Tolerance: 0.10000000149011612
@@ -287,7 +287,7 @@ Visualization Manager:
         Value: Arrow
       Topic: /oak_front_vio/odom
       Unreliable: false
-      Value: true
+      Value: false
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
@@ -305,7 +305,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: true
+      Enabled: false
       Keep: 100
       Name: Odometry_LIO
       Position Tolerance: 0.10000000149011612
@@ -322,7 +322,7 @@ Visualization Manager:
         Value: Arrow
       Topic: /Odometry
       Unreliable: false
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -353,7 +353,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.209663391113281
+      Distance: 28.088674545288086
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -369,9 +369,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6197958588600159
+      Pitch: 1.0397958755493164
       Target Frame: map
-      Yaw: 1.5681413412094116
+      Yaw: 1.3581364154815674
     Saved: ~
 Window Geometry:
   Displays:
