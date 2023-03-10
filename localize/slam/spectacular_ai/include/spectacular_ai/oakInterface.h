@@ -30,18 +30,21 @@ private:
     std::string _namespace;
     dai::Pipeline pipeline;
     std::shared_ptr<dai::Device> device;
+    //std::shared_ptr<dai::RawCameraControl> CameraControl;
     std::shared_ptr<spectacularAI::daiPlugin::Pipeline> vioPipeline;
     std::unique_ptr<spectacularAI::daiPlugin::Session> session;
     std::shared_ptr<dai::node::ColorCamera> cameraRgb;
     std::shared_ptr<dai::node::StereoDepth> stereo;
     std::shared_ptr<dai::node::XLinkOut> xoutRgb;
     std::shared_ptr<dai::node::XLinkOut> xoutDepth;
+    dai::CameraControl ctrl;
 
 public:
     oakInterface() = default;
     explicit oakInterface(const std::string& mxId, const oakConfig& oak_config=oakConfig{});
     void registerImuHook(const std::function<void(std::shared_ptr<dai::IMUData>)>& imuHook);
     void registerDepthHook(const std::function<void(std::shared_ptr<dai::ImgFrame>)>& imgHook);
+    void RgbCameraControl(int compensation, int exposure, int iso);
     void set_IR_project(float mA);
     std::shared_ptr<dai::DataOutputQueue> getRgbQueue(int maxSize=5, bool blocking=false);
     std::shared_ptr<const spectacularAI::VioOutput> getOutput();

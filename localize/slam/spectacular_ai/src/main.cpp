@@ -28,9 +28,15 @@ int main(int argc, char** argv) {
     oak.registerDepthHook(bridge.depthPublish);
     //oak.set_IR_project(1000.0);
     oak.start();
-
+    unsigned char set_cam = 100;
     ROS_INFO("VIO Start!!!");
     while(ros::ok()) {
+        if(set_cam){
+            set_cam = set_cam - 1;
+            if(set_cam == 0){
+                oak.RgbCameraControl(0,1000,100);
+            }
+        }
         auto vioOut = oak.getOutput();
         tf2::Quaternion frame2world(vioOut->pose.orientation.x, vioOut->pose.orientation.y, vioOut->pose.orientation.z, vioOut->pose.orientation.w);
         geometry_msgs::TransformStamped frame2base = tfBuffer.lookupTransform("base_link", "oak_front_right_camera_frame", ros::Time(0));

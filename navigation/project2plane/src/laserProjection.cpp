@@ -52,6 +52,15 @@ void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
         trans.transform.rotation.w = q.w();
         trans.transform.translation.z = 0;
         br.sendTransform(trans);
+        q.setRPY(roll, pitch, yaw);
+        trans.child_frame_id = "plane_base_link_OBS";
+        trans.header.stamp = ros::Time::now();
+        trans.transform.rotation.x = q.x();
+        trans.transform.rotation.y = q.y();
+        trans.transform.rotation.z = q.z();
+        trans.transform.rotation.w = q.w();
+        trans.transform.translation.z = 0;
+        br.sendTransform(trans);
     }
     float theta = new_msg.angle_min;
     for (auto &it: new_msg.ranges) {

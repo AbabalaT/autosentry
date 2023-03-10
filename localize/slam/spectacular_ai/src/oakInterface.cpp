@@ -56,7 +56,12 @@ oakInterface::oakInterface(const std::string& mxId, const oakConfig& oak_config)
         throw std::runtime_error("DepthAI Device with MxId  \"" + mxId + "\" not found.  \"");
     }
     ROS_INFO("Device USB status: %s", usbStrings[static_cast<int32_t>(device->getUsbSpeed())].c_str());
+}
 
+void oakInterface::RgbCameraControl(int compensation, int exposure, int iso){
+    ctrl.setAutoExposureCompensation(compensation);
+    ctrl.setManualExposure(exposure,iso);
+    ROS_INFO("RGB_Camera Set OK!");
 }
 
 void oakInterface::registerImuHook(const std::function<void(std::shared_ptr<dai::IMUData>)>& imuHook) {
