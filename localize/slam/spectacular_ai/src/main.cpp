@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
     while(ros::ok()) {
         if(set_cam){
             set_cam = set_cam - 1;
-            if(set_cam == 0){
-                oak.RgbCameraControl(0,1000,100);
+            if(set_cam < 5 ){
+                oak.RgbCameraControl(0,1000,150);
             }
         }
         auto vioOut = oak.getOutput();

@@ -11,8 +11,18 @@
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/filters/voxel_grid.h>
 
 ros::Publisher pcl_publisher;
+
+inline float float_abs(float x){
+    if(x > 0){
+        return x;
+    }else{
+        return -x;
+    }
+}
 
 struct PointInt {
     int p_x, p_y, p_z;
@@ -29,24 +39,29 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     cv::Mat hight_map(1201, 1201, CV_8UC1, cv::Scalar(0));
     cv::Mat gradient_map(1201, 1201, CV_8UC1, cv::Scalar(0));
     for (auto point: (pcl2cloud->points)) {
+        point.z = point.z + 0.52;
         if (point.x < 5.8) {
             if (point.x > -5.8) {
                 if (point.y < 5.8) {
                     if (point.y > -5.8) {
                         if (point.z > -1.2) {
                             if (point.z < 1.2) {
-                                auto point_distance = sqrt(point.x* point.x + point.y * point.y);
+                                /*
+                                float point_distance = sqrtf(point.x * point.x + point.y * point.y);
                                 if(point_distance > 0.4f){
-                                    if(point.z > 0.7 * (point_distance - 0.4)){
+                                    if(float_abs(point.z) > 0.7f * (point_distance - 0.3f)){
                                         pcl::PointXYZ point4push;
+                                        /*
                                         point4push.x = point.x;
                                         point4push.y = point.y;
                                         point4push.z = 0.0f;
-                                        pcl2cloud_out->points.push_back(point4push);
+
+                                        pcl2cloud_out->points.push_back(point);
                                         point_num = point_num + 1;
                                         continue;
                                     }
                                 }
+                                */
                                 int px = 100 * point.x + 600;
                                 int py = 100 * point.y + 600;
                                 unsigned char pz = 100 * point.z + 130;
@@ -72,6 +87,15 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     for (auto point: point_list2) {
         unsigned char max = 0;
         unsigned char min = 255;
+        if(point.p_x < 640){
+            if(point.p_x > 560){
+                if(point.p_y < 640){
+                    if(point.p_y > 560){
+                        continue;
+                    }
+                }
+            }
+        }
         int surround_point_x = 0;
         for (surround_point_x = ((point.p_x - 10) > 0 ? (point.p_x - 10) : 0);
                 surround_point_x < ((point.p_x + 10) < 1199 ? (point.p_x + 10) : 1199);
@@ -90,15 +114,6 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                 }
             }
         }
-        if(point.p_x < 0.4){
-            if(point.p_x > -0.4){
-                if(point.p_y < 0.4){
-                    if(point.p_y > -0.4){
-                        continue;
-                    }
-                }
-            }
-        }
         unsigned char point_gradient = max - min;
         gradient_map.at<uchar>(point.p_x, point.p_y) = point_gradient;
         if(point_gradient > 14){
@@ -114,6 +129,11 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     pcl2cloud_out->height = 1;
     pcl2cloud_out->points.resize(pcl2cloud_out->width * pcl2cloud_out->height);
     //cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
+    pcl::VoxelGrid<pcl::PointXYZ> filter;
+    filter.setInputCloud(pcl2cloud_out);
+    filter.setLeafSize(0.03f, 0.03f, 0.03f);
+    filter.filter(*pcl2cloud_out);
+
     pcl::toROSMsg(*pcl2cloud_out, ROSPCL_output);
     //cv::imshow("gradient_map", gradient_map);
     //cv::waitKey(1);

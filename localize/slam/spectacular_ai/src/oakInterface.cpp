@@ -59,6 +59,8 @@ oakInterface::oakInterface(const std::string& mxId, const oakConfig& oak_config)
 }
 
 void oakInterface::RgbCameraControl(int compensation, int exposure, int iso){
+    auto x =ctrl.setAutoExposureLock(bool(1));
+    //ROS_INFO("%d", x);
     ctrl.setAutoExposureCompensation(compensation);
     ctrl.setManualExposure(exposure,iso);
     ROS_INFO("RGB_Camera Set OK!");

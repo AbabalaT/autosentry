@@ -8,20 +8,20 @@ TebLocalPlannerROS:
   dt_ref: 0.3
   dt_hysteresis: 0.1   #根据当前时间分辨率自动调整大小的滞后现象，通常约为。建议使用dt ref的10%。
   max_samples: 500
-  global_plan_overwrite_orientation: False
+  global_plan_overwrite_orientation: True
   allow_init_with_backwards_motion: True
-  max_global_plan_lookahead_dist: 5 #2.0
-  global_plan_viapoint_sep: 0.05
-  global_plan_prune_distance: 1.5
+  max_global_plan_lookahead_dist: 2.0 #2.0
+  global_plan_viapoint_sep: 0.1
+  global_plan_prune_distance: 2.0
   exact_arc_length: True
   feasibility_check_no_poses: 2
-  publish_feedback: False
+  publish_feedback: True
 
     # Robot
 
-  max_vel_x: 5.0 #11 12.5
-  max_vel_y: 5.0
-  max_vel_x_backwards: 5.0 #0.5
+  max_vel_x: 1.0 #11 12.5
+  max_vel_y: 1.0
+  max_vel_x_backwards: 1.0 #0.5
   max_vel_theta: 36  # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
   acc_lim_x: 2.0 #0.5############################3  1.1
   acc_lim_y: 1.0
@@ -34,7 +34,7 @@ TebLocalPlannerROS:
 
   footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
     type: "circular"
-    radius: 0.5 # for type "circular"
+    radius: 0.22 # for type "circular"
     line_start: [-0.1, 0.0] # for type "line"
     line_end: [0.1, 0.0] # for type "line"
     front_offset: 0.2 # for type "two_circles"
