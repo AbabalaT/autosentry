@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /Grid1/Offset1
         - /PointCloud21
+        - /PointCloud21/Status1
         - /Map1
         - /CostMap1
         - /Odometry_VIO11
@@ -131,7 +132,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /move_base/global_costmap/costmap
+      Topic: /map
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -139,12 +140,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: CostMap
-      Topic: /move_base/local_costmap/costmap
+      Topic: /move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: false
+      Value: true
     - Alpha: 1
       Class: rviz/Axes
       Enabled: true
@@ -355,7 +356,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 13.127962112426758
+      Distance: 28.786861419677734
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -371,9 +372,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0447958707809448
+      Pitch: 0.6247959136962891
       Target Frame: map
-      Yaw: 1.3331364393234253
+      Yaw: 2.6631340980529785
     Saved: ~
 Window Geometry:
   Displays:
