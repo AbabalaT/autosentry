@@ -3,7 +3,7 @@ obstacle_range: 10.5     # 障碍物识别距离
 raytrace_range: 11     # 障碍物清除距离
 robot_radius: 0.28
 inflation_radius: 0.38
-track_unknown_space: true
+track_unknown_space: false
 
 observation_sources: point_cloud_livox
 

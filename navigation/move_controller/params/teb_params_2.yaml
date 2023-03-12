@@ -9,21 +9,21 @@ TebLocalPlannerROS:
   max_samples: 500
   global_plan_overwrite_orientation: False
   allow_init_with_backwards_motion: True
-  max_global_plan_lookahead_dist: 1.37 #2.0
+  max_global_plan_lookahead_dist: 4.0 #2.0
   global_plan_viapoint_sep: 0.05
   global_plan_prune_distance: 1.5
   exact_arc_length: True
-  feasibility_check_no_poses: 3
+  feasibility_check_no_poses: 10
   publish_feedback: False
 
     # Robot
 
-  max_vel_x: 2.8        #11 12.5
-  max_vel_y: 1.5
+  max_vel_x: 3.0        #11 12.5
+  max_vel_y: 2.0
   max_vel_x_backwards: 2.0 #0.5
   max_vel_theta: 11  # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
-  acc_lim_x: 0.775 #0.5############################3  1.1
-  acc_lim_y: 1.05
+  acc_lim_x: 1 #0.5############################3  1.1
+  acc_lim_y: 1
   acc_lim_theta: 1.3 #0.5###################### 0.95
 
   # ********************** Carlike robot parameters ********************
@@ -89,7 +89,7 @@ TebLocalPlannerROS:
   weight_optimaltime: 20   #1  ##################### must be > 0
   weight_shortest_path: 10
   weight_obstacle: 20
-  weight_inflation: 2  #0.2#########################
+  weight_inflation: 5  #0.2#########################
   weight_dynamic_obstacle: 10 # not in use yet
   weight_dynamic_obstacle_inflation: 0.2
   weight_viapoint: 20

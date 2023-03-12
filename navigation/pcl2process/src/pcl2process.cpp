@@ -77,11 +77,13 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                                     }
                                 }
                             }
+                            continue;
                         }
                     }
                 }
             }
         }
+        pcl2cloud_out->points.push_back(point);
     }
 
     for (auto point: point_list2) {
