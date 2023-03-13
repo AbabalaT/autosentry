@@ -15,7 +15,7 @@ def teleop_key():
     thread_stop = False
     cmd = Twist()
     #roslib.load_manifest('smartcar_teleop')
-    pub = rospy.Publisher('/cmd_vel', Twist)
+    pub = rospy.Publisher('/cmd_vel_RC', Twist)
     rospy.init_node('key_rc_test_node')
 
     rate = rospy.Rate(rospy.get_param('~hz', 1))

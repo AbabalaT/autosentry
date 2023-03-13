@@ -1,4 +1,5 @@
 TebLocalPlannerROS:
+
   odom_topic: odom
 
     # Trajectory
@@ -9,21 +10,21 @@ TebLocalPlannerROS:
   max_samples: 500
   global_plan_overwrite_orientation: False
   allow_init_with_backwards_motion: True
-  max_global_plan_lookahead_dist: 4.0 #2.0
+  max_global_plan_lookahead_dist: 3.0 #2.0
   global_plan_viapoint_sep: 0.05
   global_plan_prune_distance: 1.5
   exact_arc_length: True
-  feasibility_check_no_poses: 10
+  feasibility_check_no_poses: 2
   publish_feedback: False
 
     # Robot
 
   max_vel_x: 3.0        #11 12.5
   max_vel_y: 2.0
-  max_vel_x_backwards: 2.0 #0.5
+  max_vel_x_backwards: 3.0 #0.5
   max_vel_theta: 11  # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
-  acc_lim_x: 1 #0.5############################3  1.1
-  acc_lim_y: 1
+  acc_lim_x: 1.0 #0.5############################3  1.1
+  acc_lim_y: 1.0
   acc_lim_theta: 1.3 #0.5###################### 0.95
 
   # ********************** Carlike robot parameters ********************
@@ -33,7 +34,7 @@ TebLocalPlannerROS:
 
   footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
     type: "circular"
-    radius: 0.28 # for type "circular"
+    radius: 0.22 # for type "circular"
     line_start: [-0.1, 0.0] # for type "line"
     line_end: [0.1, 0.0] # for type "line"
     front_offset: 0.2 # for type "two_circles"
@@ -45,15 +46,15 @@ TebLocalPlannerROS:
       # GoalTolerance
 
   xy_goal_tolerance: 0.3
-  yaw_goal_tolerance: 0.3
+  yaw_goal_tolerance: 3.2
   free_goal_vel: Ture
   complete_global_plan: True
 
     # Obstaclesn
 
 
-  min_obstacle_dist: 0.25 #0.245   This value must also include our robot's expansion, since footprint_model is set to "line".
-  inflation_dist: 0.38 #0.6 ######
+  min_obstacle_dist: 0.213 #0.245   This value must also include our robot's expansion, since footprint_model is set to "line".
+  inflation_dist: 0.28 #0.6 ######
   include_costmap_obstacles: True
   costmap_obstacles_behind_robot_dist: 1.0
   obstacle_poses_affected: 30
@@ -77,19 +78,19 @@ TebLocalPlannerROS:
   penalty_epsilon: 0.148  #  0.1##########################
   obstacle_cost_exponent: 4
   weight_max_vel_x: 15
-  weight_max_vel_y: 15
-  weight_max_vel_theta: 1  #80
+  weight_max_vel_y: 10
+  weight_max_vel_theta: 0.5  #80
   weight_acc_lim_x: 2.8
   weight_acc_lim_y: 2.5
   weight_acc_lim_theta: 1  #90
-  weight_kinematics_nh: 22
+  weight_kinematics_nh: 0.1
 
-  weight_kinematics_forward_drive: 1000 # 1 #############################
+  weight_kinematics_forward_drive: 0.1 # 1 #############################
   weight_kinematics_turning_radius: 0.1 #1 ###############################
   weight_optimaltime: 20   #1  ##################### must be > 0
   weight_shortest_path: 10
   weight_obstacle: 20
-  weight_inflation: 5  #0.2#########################
+  weight_inflation: 2  #0.2#########################
   weight_dynamic_obstacle: 10 # not in use yet
   weight_dynamic_obstacle_inflation: 0.2
   weight_viapoint: 20

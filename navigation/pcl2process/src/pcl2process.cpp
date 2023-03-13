@@ -14,6 +14,10 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/filters/voxel_grid.h>
 
+//#include <pcl/features/normal_3d.h>
+//#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/surface/mls.h>
+
 ros::Publisher pcl_publisher;
 
 inline float float_abs(float x){
@@ -34,6 +38,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud <pcl::PointXYZ>);
     sensor_msgs::PointCloud2 ROSPCL_output;
     pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
+
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud <pcl::PointXYZ>);
     unsigned int point_num = 0;
     cv::Mat hight_map(1201, 1201, CV_8UC1, cv::Scalar(0));
@@ -77,13 +82,13 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                                     }
                                 }
                             }
-                            continue;
+                            //continue;
                         }
                     }
                 }
             }
         }
-        pcl2cloud_out->points.push_back(point);
+        //pcl2cloud_out->points.push_back(point);
     }
 
     for (auto point: point_list2) {

@@ -8,7 +8,6 @@ Panels:
         - /Status1
         - /Grid1/Offset1
         - /PointCloud21
-        - /PointCloud21/Status1
         - /Map1
         - /CostMap1
         - /Odometry_VIO11
@@ -356,7 +355,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 28.786861419677734
+      Distance: 17.07730484008789
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -364,17 +363,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 2.800712823867798
-        Y: 0.9727454781532288
-        Z: -1.6001286506652832
+        X: 4.113718032836914
+        Y: -0.9850814342498779
+        Z: -1.415182113647461
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6247959136962891
+      Pitch: 1.2447954416275024
       Target Frame: map
-      Yaw: 2.6631340980529785
+      Yaw: 3.4981353282928467
     Saved: ~
 Window Geometry:
   Displays:
