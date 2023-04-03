@@ -1,6 +1,6 @@
 <launch>
     <node pkg="tf" type="static_transform_publisher" name="map_tf_broadcaster_1" args="0 0 0 0 0 0 map odom 10" />
     <node pkg="tf" type="static_transform_publisher" name="map_tf_broadcaster_2" args="0 0 -0.42 0 0 0 body base_link 10" />
-    <node pkg="tf" type="static_transform_publisher" name="map_tf_broadcaster_3" args="0 0 0.5 0 0 0 map camera_init 10" />
+    <node pkg="tf" type="static_transform_publisher" name="map_tf_broadcaster_3" args="0 0 0.5 0 0 0 odom camera_init 10" />
 <!--     <node pkg="tf" type="static_transform_publisher" name="map_tf_broadcaster_4" args="0 0 0.1 0 0 0 base_link livox_frame 10" /> -->
 </launch>

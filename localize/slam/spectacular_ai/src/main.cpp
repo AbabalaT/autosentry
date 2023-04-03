@@ -20,9 +20,10 @@ int main(int argc, char** argv) {
     nav_msgs::Odometry odom;
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener(tfBuffer);
+    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 5);
+
     oakInterface oak(config.mxId, config.oak);
     ros_bridge bridge(config.ros, config.oak, oak.readCalibration());
-    ros::Publisher odom_pub = nh.advertise<nav_msgs::Odometry>("odom", 5);
     bridge.registerRgbQueue(oak.getRgbQueue(30));
     oak.registerImuHook(bridge.imuPublish);
     oak.registerDepthHook(bridge.depthPublish);
@@ -80,6 +81,6 @@ int main(int argc, char** argv) {
         odom_pub.publish(odom);
         //std::cout << "Track Status: " << int(vioOut->status) << std::endl;
     }
-    oak.set_IR_project(-1.0);
+    //oak.set_IR_project(-1.0);
     return 0;
 }

@@ -51,6 +51,15 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                     if (point.y > -5.8) {
                         if (point.z > -1.2) {
                             if (point.z < 1.2) {
+                                if(point.x < 0.35){
+                                    if(point.y < 0.33){
+                                        if(point.x > -0.35){
+                                            if(point.y > -0.33){
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
                                 /*
                                 float point_distance = sqrtf(point.x * point.x + point.y * point.y);
                                 if(point_distance > 0.4f){
@@ -94,10 +103,10 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     for (auto point: point_list2) {
         unsigned char max = 0;
         unsigned char min = 255;
-        if(point.p_x < 640){
-            if(point.p_x > 560){
-                if(point.p_y < 640){
-                    if(point.p_y > 560){
+        if(point.p_x < 635){
+            if(point.p_x > 565){
+                if(point.p_y < 635){
+                    if(point.p_y > 565){
                         continue;
                     }
                 }
@@ -130,6 +139,37 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
             point4push.z = 0.0f;
             pcl2cloud_out->points.push_back(point4push);
             point_num = point_num + 1;
+        }else{
+            unsigned char max_5cm = 0;
+            unsigned char min_5cm = 255;
+            int surround_point_x = 0;
+            for (surround_point_x = ((point.p_x - 5) > 0 ? (point.p_x - 5) : 0);
+                 surround_point_x < ((point.p_x + 5) < 1199 ? (point.p_x + 5) : 1199);
+                 surround_point_x = surround_point_x + 1) {
+                for (auto surround_point_y : point_list1[surround_point_x]) {
+                    if((surround_point_y < point.p_y + 5) and (surround_point_y > point.p_y - 5)){
+                        if(hight_map.at<uchar>(surround_point_x, surround_point_y) < min){
+                            min_5cm = hight_map.at<uchar>(surround_point_x, surround_point_y);
+                        }
+                        if(hight_map.at<uchar>(surround_point_x, surround_point_y) > max){
+                            max_5cm = hight_map.at<uchar>(surround_point_x, surround_point_y);
+                        }
+                    }
+                    if(surround_point_y > point.p_y + 5){
+                        break;
+                    }
+                }
+            }
+            unsigned char point_gradient_5cm = max_5cm - min_5cm;
+            //gradient_map.at<uchar>(point.p_x, point.p_y) = point_gradient;
+            if(point_gradient > 10){
+                pcl::PointXYZ point4push;
+                point4push.x = (float)(point.p_x - 600)/100;
+                point4push.y = (float)(point.p_y - 600)/100;
+                point4push.z = 0.0f;
+                pcl2cloud_out->points.push_back(point4push);
+                point_num = point_num + 1;
+            }
         }
     }
     pcl2cloud_out->width = point_num;

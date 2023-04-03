@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/RM2022" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/RM2022/windMill/src/DigitalRecognition" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/robot/robot_serial" vcs="Git" />
   </component>
 </project>

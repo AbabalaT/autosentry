@@ -33,7 +33,7 @@ TebLocalPlannerROS:
   # ********************************************************************
 
   footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
-    type: "circular"
+    type: "polygen"
     radius: 0.22 # for type "circular"
     line_start: [-0.1, 0.0] # for type "line"
     line_end: [0.1, 0.0] # for type "line"
@@ -41,7 +41,7 @@ TebLocalPlannerROS:
     front_radius: 0.2 # for type "two_circles"
     rear_offset: 0.2 # for type "two_circles"
     rear_radius: 0.2 # for type "two_circles"
-    vertices: [[-0.145, -0.018], [-0.145, 0.06], [0.01, 0.06], [0.01, -0.018]] # for type "polygon"
+    vertices: [[-0.25, -0.25], [-0.25, 0.25], [0.25, 0.25], [0.25, -0.25]] # for type "polygon"
 
       # GoalTolerance
 

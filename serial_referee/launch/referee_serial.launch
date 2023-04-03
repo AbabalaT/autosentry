@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="serial_referee" type="serial_referee_node" name="serial_referee" output="screen">
+        <param name="serial_referee_name" value="/dev/ttyUSB0"/>
+    </node>
+</launch>
