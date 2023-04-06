@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include <ros/ros.h>
+#include <nav_msgs/Odometry.h>
 #include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <tf2/LinearMath/Quaternion.h>
@@ -23,8 +24,7 @@ bool publish_tf = false;
 bool callbacked_flag = false;
 tf2_ros::Buffer tfBuffer;
 
-void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
-    sensor_msgs::LaserScan new_msg = *msg;
+void project2plane_callback(const nav_msgs::Odometry::ConstPtr& odom_3d){
     static tf2_ros::TransformBroadcaster br;
     geometry_msgs::TransformStamped laser2base, base2map;
     try {
@@ -52,16 +52,25 @@ void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
         trans.transform.rotation.w = q.w();
         trans.transform.translation.z = 0;
         br.sendTransform(trans);
-        q.setRPY(roll, pitch, yaw);
-        trans.child_frame_id = "plane_base_link_OBS";
-        trans.header.stamp = ros::Time::now();
-        trans.transform.rotation.x = q.x();
-        trans.transform.rotation.y = q.y();
-        trans.transform.rotation.z = q.z();
-        trans.transform.rotation.w = q.w();
-        trans.transform.translation.z = 0;
-        br.sendTransform(trans);
     }
+}
+
+void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
+    sensor_msgs::LaserScan new_msg = *msg;
+    static tf2_ros::TransformBroadcaster br;
+    geometry_msgs::TransformStamped laser2base, base2map;
+    try {
+        base2map = tfBuffer.lookupTransform("map", "base_link", ros::Time(0));
+    }
+    catch (tf2::TransformException &ex) {
+        ROS_WARN("Project2Scan Get TF ERROR!");
+        return;
+    }
+
+    tf2::Quaternion b2m{base2map.transform.rotation.x, base2map.transform.rotation.y,
+                        base2map.transform.rotation.z, base2map.transform.rotation.w};
+    double roll = 0, pitch = 0, yaw = 0;
+    tf2::Matrix3x3(b2m).getRPY(roll, pitch, yaw);
     float theta = new_msg.angle_min;
     for (auto &it: new_msg.ranges) {
         it = it * cos(pitch*cos(theta));
@@ -97,6 +106,7 @@ int main(int argc, char **argv) {
     tf2_ros::TransformListener tfListener(tfBuffer);
 //#ifndef USE_CUSTOM_LASER2SCAN
     auto sub1 = pnh.subscribe("/scan", 100, laserCallback);
+    auto odomSub = pnh.subscribe<nav_msgs::Odometry>("//Odometry", 10, project2plane_callback);
 //#else
     //auto sub2 = pnh.subscribe("/depth_image", 100, depth_img_callback);
 //#endif

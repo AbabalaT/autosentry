@@ -51,14 +51,8 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                     if (point.y > -5.8) {
                         if (point.z > -1.2) {
                             if (point.z < 1.2) {
-                                if(point.x < 0.35){
-                                    if(point.y < 0.33){
-                                        if(point.x > -0.35){
-                                            if(point.y > -0.33){
-                                                continue;
-                                            }
-                                        }
-                                    }
+                                if(point.x * point.x + point.y * point.y < 0.09){
+                                    continue;
                                 }
                                 /*
                                 float point_distance = sqrtf(point.x * point.x + point.y * point.y);

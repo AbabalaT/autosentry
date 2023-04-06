@@ -25,6 +25,7 @@ def teleop_key():
     max_tv = walk_vel_
     max_rv = yaw_rate_
     turn = 0
+    sidewalk = 0
     speed = 0
 
     while (thread_stop == False):
@@ -48,17 +49,25 @@ def teleop_key():
         elif ch == 'd':
             max_rv = yaw_rate_
             turn = turn - 0.5
+        elif ch == 'q':
+            max_rv = yaw_rate_
+            sidewalk = sidewalk + 0.5
+        elif ch == 'e':
+            max_rv = yaw_rate_
+            sidewalk = sidewalk - 0.5
         elif ch == 'p':
             turn = 0
             speed = 0
             thread_stop = True
         else:
             turn = 0
+            sidewalk = 0
             speed = 0
             max_tv = walk_vel_
             max_rv = yaw_rate_
 
         cmd.linear.x = speed * max_tv
+        cmd.linear.y = sidewalk * max_tv
         cmd.angular.z = turn * max_rv
         pub.publish(cmd)
         rate.sleep()

@@ -105,7 +105,6 @@ namespace Referee {
     }
 }
 
-
 bool scan() {
     int eraseSize = 0;
     if ((int)uart_buff.size() < sizeof(Head) + sizeof(Tail) +1) {
@@ -140,7 +139,7 @@ bool scan() {
         }
         eraseSize = i + head.length;
         p = (uint8_t*)uart_buff.data() + i + 7;
-        //ROS_INFO("referee message with ID %X has detected and length = %d", head.cmd_id, head.length);
+
         //ROS_INFO("current buff length = %ld", uart_buff.size());
         switch (head.cmd_id) {
             case 0x0001:
@@ -149,7 +148,8 @@ bool scan() {
                 }
                 break;
             case 0x0003:
-                if(head.length == 28){
+                //ROS_INFO("referee message with ID 0x0003 has detected and length = %d",head.length);
+                if(head.length == 32){
                     Referee::get_HP(p);
                 }
                 break;
@@ -202,7 +202,7 @@ int main(int argc, char** argv) {
             uart_buff.push_back(frame_hex[0]);
             scan();
         }else{
-            ROS_INFO("Nothing Received!");
+            //ROS_INFO("Nothing Received!");
         }
         ros::spinOnce();
     }
