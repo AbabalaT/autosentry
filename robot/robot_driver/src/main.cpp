@@ -58,9 +58,9 @@ void odomCallback(odometry msg) {
 void cmdCallback(const geometry_msgs::Twist::ConstPtr &msg) {
     std::cout<<"receive a control speed!"<<std::endl;
     cmd c {
-        .vx = (int16_t)(msg->linear.x * 1000),
-        .vy = (int16_t)(msg->linear.y * 1000),
-        .wz = (int16_t)(msg->angular.z * -1000)
+        .vx = (int16_t)(msg->linear.x * 1500),
+        .vy = (int16_t)(msg->linear.y * 1500),
+        .wz = (int16_t)(msg->angular.z * -1500)
     };
     std::cout<< c.vx << " "<< c.vy << " "<< c.wz << std::endl;
     serial_handle.sendMsg(0x82, c);
