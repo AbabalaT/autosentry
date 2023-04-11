@@ -141,6 +141,7 @@ bool scan() {
         p = (uint8_t*)uart_buff.data() + i + 7;
 
         //ROS_INFO("current buff length = %ld", uart_buff.size());
+        //ROS_INFO("referee message has detected and length = %d",head.length);
         switch (head.cmd_id) {
             case 0x0001:
                 if(head.length == 11){
@@ -148,7 +149,7 @@ bool scan() {
                 }
                 break;
             case 0x0003:
-                //ROS_INFO("referee message with ID 0x0003 has detected and length = %d",head.length);
+
                 if(head.length == 32){
                     Referee::get_HP(p);
                 }
