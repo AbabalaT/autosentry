@@ -28,7 +28,7 @@ robot_HP = 600
 pre_base_HP = 1500
 base_HP = 1500
 base_HP_list = [1000, 1000]
-self_color = 'red'
+self_color = 'blue'
 save_base_time_cnt = 0  # 单位0.1秒
 wait_attack_cnt = 1200
 attack_cnt = 0
@@ -172,7 +172,7 @@ if __name__ == '__main__':
             target_pose = PoseStamped()
             target_pose.header.frame_id = "map"
 
-            if (game_status == 4) and (require_add_HP == 1):
+            if (require_add_HP == 1):
                 target_pose.pose.position.x = -2.50
                 target_pose.pose.position.y = 3.85
                 target_pose.pose.position.z = 0
@@ -228,6 +228,7 @@ if __name__ == '__main__':
             if target_spinning_speed > 16000:
                 target_spinning_speed = target_spinning_speed - 2000
             spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
+            # spin_speed_msg.spinning_speed = 0
             spin_speed_pulisher.publish(spin_speed_msg)
 
         if pitch_state == 0:
