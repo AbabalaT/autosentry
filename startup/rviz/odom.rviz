@@ -8,11 +8,11 @@ Panels:
         - /Status1
         - /Grid1/Offset1
         - /PointCloud21
-        - /PointCloud21/Status1
         - /Imu1
         - /Map1
         - /CostMap1
         - /Robot1
+        - /PointCloud22
       Splitter Ratio: 0.4082218110561371
     Tree Height: 694
   - Class: rviz/Selection
@@ -326,6 +326,34 @@ Visualization Manager:
       Topic: /Odometry
       Unreliable: false
       Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /Laser_map
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -356,7 +384,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.522061347961426
+      Distance: 3.4947245121002197
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -364,17 +392,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.6481415033340454
-        Y: -0.29938820004463196
-        Z: -0.4139816164970398
+        X: -0.04650488868355751
+        Y: 0.3175181746482849
+        Z: -1.0071871280670166
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.305202841758728
+      Pitch: 1.0402027368545532
       Target Frame: body
-      Yaw: 4.612185001373291
+      Yaw: 4.052171230316162
     Saved: ~
 Window Geometry:
   Displays:

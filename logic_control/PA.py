@@ -62,7 +62,7 @@ game_status = 0
         开启Pitch轴扫描
 '''
 current_chassis_angle = 0  # 底盘相对云台角度
-target_spinning_speed = 0  # 期望小陀螺速度
+target_spinning_speed = 12000 # 期望小陀螺速度
 
 self_aim_state = 0
 location_target = 0
@@ -102,7 +102,7 @@ def game_HP_callback(ext_HP):
 def game_hurt_callback(ext_hurt):
     global target_spinning_speed
     if ext_hurt.hurt_type == 0:
-        target_spinning_speed = 9000
+        target_spinning_speed = 26000
     # print(ext_hurt.game_type)
 
 
@@ -131,11 +131,11 @@ if __name__ == '__main__':
     ros_spin_thread = threading.Thread(target=rospy.spin, daemon=True)
     ros_spin_thread.start()
 
-    while game_status != 4:
-        if rospy.is_shutdown():
-            break
-        print('Waiting For Match to start')
-        rospy.sleep(0.25)
+    # while game_status != 4:
+    #     if rospy.is_shutdown():
+    #         break
+    #     print('Waiting For Match to start')
+    #     rospy.sleep(0.25)
 
     while not rospy.is_shutdown():
         try:
@@ -148,7 +148,7 @@ if __name__ == '__main__':
             # print("logic no TF get !")
 
         seq_1 = seq_1 + 1
-        if seq_1 >= 5:
+        if seq_1 >= 8:
             seq_1 = 0
             if robot_HP < 250:
                 require_add_HP = 1
@@ -193,9 +193,9 @@ if __name__ == '__main__':
         if seq_2 >= 15:
             seq_2 = 0
             spin_speed_msg = spinning_control()
-            if target_spinning_speed > 0:
+            if target_spinning_speed > 18000:
                 target_spinning_speed = target_spinning_speed - 500
-            spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 2000)
+            spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 3000)
             # spin_speed_msg.spinning_speed = 0
             spin_speed_pulisher.publish(spin_speed_msg)
 

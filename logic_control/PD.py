@@ -21,6 +21,7 @@ from serial_referee.msg import message_game_hurt
 
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
+aim_distance = 0
 lock_yaw_cnt = 0
 remain_time = 300
 require_add_HP = 0
@@ -33,6 +34,7 @@ save_base_time_cnt = 0  # 单位0.1秒
 wait_attack_cnt = 1200
 attack_cnt = 0
 strategy_state = 0
+follow_enemy_cnt = 0
 seq_1 = 0
 seq_2 = 0
 
@@ -54,6 +56,7 @@ pitch_state = 0  # 0:上升 1: 下降
 
 target_yaw = 0
 game_status = 0
+
 '''
 订阅自瞄
 当相机自瞄没有数据时：
@@ -61,6 +64,7 @@ game_status = 0
         开启Yaw轴扫描
         开启Pitch轴扫描
 '''
+
 current_chassis_angle = 0  # 底盘相对云台角度
 target_spinning_speed = 16000  # 期望小陀螺速度
 
@@ -75,9 +79,11 @@ def rps_spin_job():
     rospy.spin()
 
 def autoaim_callback(ext_aim):
-    global lock_yaw_cnt
+    global lock_yaw_cnt, aim_distance
     if ext_aim.target_number != 0:
         lock_yaw_cnt = 2
+        aim_distance = ext_aim.
+
 
 def game_staus_callback(ext_status):
     global game_status
@@ -97,7 +103,6 @@ def game_HP_callback(ext_HP):
         robot_HP = ext_HP.blue_7_robot_HP
         base_HP = ext_HP.blue_base_HP
     print("                               HP:", robot_HP)
-
 
 def game_hurt_callback(ext_hurt):
     global target_spinning_speed
@@ -127,7 +132,7 @@ if __name__ == '__main__':
     referee_status_sub = rospy.Subscriber('/referee/status', message_game_status, game_staus_callback)
     referee_hurt_sub = rospy.Subscriber('/referee/hurt', message_game_hurt, game_hurt_callback)
     referee_HP_sub = rospy.Subscriber('/referee/HP', message_game_HP, game_HP_callback)
-
+    aim_sub = rospy.Subscriber('/robot/auto_aim', aim, autoaim_callback)
     ros_spin_thread = threading.Thread(target=rospy.spin, daemon=True)
     ros_spin_thread.start()
 
@@ -173,8 +178,8 @@ if __name__ == '__main__':
             target_pose.header.frame_id = "map"
 
             if (require_add_HP == 1):
-                target_pose.pose.position.x = -2.50
-                target_pose.pose.position.y = 3.85
+                target_pose.pose.position.x = 0
+                target_pose.pose.position.y = 0
                 target_pose.pose.position.z = 0
             elif (game_status == 4) and (save_base_time_cnt > 0):
                 target_pose.pose.position.x = 0
@@ -182,23 +187,23 @@ if __name__ == '__main__':
                 target_pose.pose.position.z = 0
             elif (game_status == 4) and (base_HP > 800):
                 if remain_time > 275:
-                    target_pose.pose.position.x = 4.4
-                    target_pose.pose.position.y = -2.4
+                    target_pose.pose.position.x = 0
+                    target_pose.pose.position.y = 0
                 elif remain_time > 250:
                     target_pose.pose.position.x = 0
                     target_pose.pose.position.y = 0
                 elif remain_time > 210:
-                    target_pose.pose.position.x = 3.0
-                    target_pose.pose.position.y = 0.35
+                    target_pose.pose.position.x = 0
+                    target_pose.pose.position.y = 0
                 elif remain_time > 180:
-                    target_pose.pose.position.x = 5.13
-                    target_pose.pose.position.y = 2.93
+                    target_pose.pose.position.x = 0
+                    target_pose.pose.position.y = 0
                 elif remain_time > 150:
-                    target_pose.pose.position.x = 3.0
-                    target_pose.pose.position.y = 0.35
+                    target_pose.pose.position.x = 0
+                    target_pose.pose.position.y = 0
                 elif remain_time > 120:
-                    target_pose.pose.position.x = -0.65
-                    target_pose.pose.position.y = -0.93
+                    target_pose.pose.position.x = 0
+                    target_pose.pose.position.y = 0
                 else:
                     target_pose.pose.position.x = 0
                     target_pose.pose.position.y = 0

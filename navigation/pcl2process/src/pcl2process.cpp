@@ -45,15 +45,15 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     cv::Mat gradient_map(2801, 2801, CV_8UC1, cv::Scalar(0));
     for (auto point: (pcl2cloud->points)) {
         point.z = point.z + 0.52;
-        if (point.x < 13.8) {
-            if (point.x > -13.8) {
+        if (point.x < 22.4) {
+            if (point.x > -5.4) {
                 if (point.y < 13.8) {
                     if (point.y > -13.8) {
                         if (point.z > -1.2) {
                             if (point.z < 1.2) {
-                                if(point.x * point.x + point.y * point.y < 0.09){
-                                    continue;
-                                }
+//                                if(point.x * point.x + point.y * point.y < 0.09){
+//                                    continue;
+//                                }
                                 /*
                                 float point_distance = sqrtf(point.x * point.x + point.y * point.y);
                                 if(point_distance > 0.4f){
@@ -70,7 +70,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                                     }
                                 }
                                 */
-                                int px = 100 * point.x + 1400;
+                                int px = 100 * point.x + 550;
                                 int py = 100 * point.y + 1400;
                                 unsigned char pz = 100 * point.z + 130;
                                 if (!(hight_map.at<uchar>(px, py))) {
@@ -128,7 +128,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
         gradient_map.at<uchar>(point.p_x, point.p_y) = point_gradient;
         if(point_gradient > 14){
             pcl::PointXYZ point4push;
-            point4push.x = (float)(point.p_x - 1400)/100;
+            point4push.x = (float)(point.p_x - 550)/100;
             point4push.y = (float)(point.p_y - 1400)/100;
             point4push.z = 0.0f;
             pcl2cloud_out->points.push_back(point4push);
@@ -178,7 +178,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     pcl::toROSMsg(*pcl2cloud_out, ROSPCL_output);
 //    cv::imshow("gradient_map", hight_map);
 //    cv::waitKey(1);
-    ROSPCL_output.header.frame_id = "plane_base_link";
+    ROSPCL_output.header.frame_id = "map";
     pcl_publisher.publish(ROSPCL_output);
     //ROS_INFO("%d",pcl2cloud->points.size());
 }

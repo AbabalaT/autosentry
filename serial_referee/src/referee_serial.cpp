@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
     std::string serial_name;
     ros::init(argc, argv, "serial_referee");
     ros::NodeHandle nh("~");
-    nh.param<std::string>("serial_referee_name", serial_name, "/dev/ttyUSB1");
+    nh.param<std::string>("serial_referee_name", serial_name, "/dev/ttyACM0");
 
     auto uart_com = open(serial_name.data(), O_RDWR);
     if(uart_com == -1){
