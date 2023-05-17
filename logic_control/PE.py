@@ -36,13 +36,14 @@ base_HP_list = [1000, 1000]
 self_color = 'blue'
 save_base_time_cnt = 0  # 单位0.1秒
 wait_attack_cnt = 1200
-attack_cnt = 0
+attack_cnt = 0  # 攻击模式计时器
 strategy_state = 0
 follow_enemy_cnt = 0
 seq_1 = 0
 seq_2 = 0
-chassis_angle = 0.0
+
 hurt_armor = 0
+chassis_angle = 0.0
 
 '''
 0:待机、 1：攻击、 2：防御
@@ -71,15 +72,12 @@ game_status = 0
         开启Pitch轴扫描
 '''
 
-current_chassis_angle = 0  # 底盘相对云台角度
 target_spinning_speed = 16000  # 期望小陀螺速度
 
 self_aim_state = 0
 location_target = 0
 spinning_velocity = 0
 
-trans
-rot
 
 def autoaim_callback(ext_aim):
     global lock_yaw_cnt, aim_distance
@@ -95,6 +93,7 @@ def game_staus_callback(ext_status):
     remain_time = ext_status.stage_remain_time
     print("                                               Game Status:", game_status)
 
+
 def game_HP_callback(ext_HP):
     # pass
     global robot_HP
@@ -107,20 +106,21 @@ def game_HP_callback(ext_HP):
         base_HP = ext_HP.blue_base_HP
     print("                               HP:", robot_HP)
 
+
 def game_hurt_callback(ext_hurt):
     global target_spinning_speed
     if ext_hurt.hurt_type == 0:
         target_spinning_speed = 26000
-    # print(ext_hurt.game_type)
 
 
 def game_command_callback(ext_command):
     pass
-    # print(ext_command.game_type)
 
 
 def chassis_angle_callback(ext_chassis_angle):
-    pass
+    global chassis_angle
+    # print("chassis angle:                          ",ext_chassis_angle)
+    chassis_angle = ext_chassis_angle
 
 def timer1_callback(event):
     global pre_base_HP, wait_attack_cnt, lock_yaw_cnt, target_yaw
@@ -195,6 +195,7 @@ def timer1_callback(event):
         target_yaw = -31.415
         # print('OK!')
 
+
 def timer2_callback(event):
     global target_spinning_speed
     spin_speed_msg = spinning_control()
@@ -203,6 +204,7 @@ def timer2_callback(event):
     spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
     # spin_speed_msg.spinning_speed = 0
     spin_speed_pulisher.publish(spin_speed_msg)
+
 
 def timer3_callback(event):
     global pitch_state, pitch_scan
@@ -226,13 +228,14 @@ def timer3_callback(event):
         if pitch_scan < -20.0:
             pitch_state = 0
 
+
 if __name__ == '__main__':
     rospy.init_node('logic_control_node')
     location_listener = tf.TransformListener()
     location_target_publisher = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=1)
     recommend_pitch_publisher = rospy.Publisher('/robot/logic_recommend_angle', Float32, queue_size=1)
     spin_speed_pulisher = rospy.Publisher('/robot/spnning_speed', spinning_control, queue_size=1)
-    chassis_angle_sub = rospy.Subscriber('/robot/chassis_angle', Int16, chassis_angle_callback)
+    chassis_angle_sub = rospy.Subscriber('/robot/chassis_angle', Float32, chassis_angle_callback)
     referee_status_sub = rospy.Subscriber('/referee/status', message_game_status, game_staus_callback)
     referee_hurt_sub = rospy.Subscriber('/referee/hurt', message_game_hurt, game_hurt_callback)
     referee_HP_sub = rospy.Subscriber('/referee/HP', message_game_HP, game_HP_callback)
