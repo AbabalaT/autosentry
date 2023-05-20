@@ -1,8 +1,8 @@
 max_obstacle_height:  0.5
-obstacle_range: 6     # 障碍物识别距离
-raytrace_range: 6     # 障碍物清除距离
-robot_radius: 0.25
-inflation_radius: 0.30
+obstacle_range: 32     # 障碍物识别距离
+raytrace_range: 32    # 障碍物清除距离
+robot_radius: 0.3
+inflation_radius: 0.35
 track_unknown_space: false
 
 observation_sources: point_cloud_livox

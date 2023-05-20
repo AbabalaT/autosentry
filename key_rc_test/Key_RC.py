@@ -51,10 +51,10 @@ def teleop_key():
             turn = turn - 0.5
         elif ch == 'q':
             max_rv = yaw_rate_
-            sidewalk = sidewalk + 0.5
+            sidewalk = sidewalk + 0.785
         elif ch == 'e':
             max_rv = yaw_rate_
-            sidewalk = sidewalk - 0.5
+            sidewalk = sidewalk - 0.785
         elif ch == 'p':
             turn = 0
             speed = 0

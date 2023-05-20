@@ -1,4 +1,4 @@
-image: map3.png # map2 map_RMUL
+image: map2.png # map2 map_RMUL
 resolution: 0.01
 origin: [-6, -7.6, 0.0]
 occupied_thresh: 0.65

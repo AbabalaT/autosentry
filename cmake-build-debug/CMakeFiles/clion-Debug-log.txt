@@ -1,4 +1,4 @@
-/snap/clion/235/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/ckyf/CKYF_workspace/src/autoSentry -B /home/ckyf/CKYF_workspace/src/autoSentry/cmake-build-debug
+/snap/clion/237/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/ckyf/CKYF_workspace/src/autoSentry -B /home/ckyf/CKYF_workspace/src/autoSentry/cmake-build-debug
 CMake Error at CMakeLists.txt:65 (message):
   find_package(catkin) failed.  catkin was neither found in the workspace nor
   in the CMAKE_PREFIX_PATH.  One reason may be that no ROS setup.sh was
