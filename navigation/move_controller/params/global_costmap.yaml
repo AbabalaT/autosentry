@@ -16,6 +16,6 @@ global_costmap:
   #参数用来决定代价地图是否需要根据map_server提供的地图信息进行初始化，如果不需要使用已有的地图这最好设置为false
 
   rolling_window: false
-  resolution: 0.04            #分辨率
+  resolution: 0.05            #分辨率
   transform_tolerance: 1    #转换容忍
   map_type: costmap           #地图类型

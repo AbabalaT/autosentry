@@ -27,8 +27,6 @@ from serial_referee.msg import message_game_hurt
 
 aim_distance = 0
 
-
-
 remain_time = 300
 require_add_HP = 0
 robot_HP = 600
@@ -90,7 +88,7 @@ game_status = 0
 '''
 
 target_spinning_speed = 0  # 期望小陀螺速度
-lowest_spinning_speed = 0
+lowest_spinning_speed = 6000
 
 self_aim_state = 0
 
@@ -101,7 +99,7 @@ rot = (0.0, 0.0, 0.0, 0.0)
 def auto_aim_callback(ext_aim):
     global aim_lock_pos_cnt, aim_distance
     if ext_aim.target_number != 0:
-        aim_lock_pos_cnt = 2
+        aim_lock_pos_cnt = 1.5
         # aim_distance = ext_aim.
 
 
@@ -124,12 +122,6 @@ def game_HP_callback(ext_HP):
         robot_HP = ext_HP.blue_7_robot_HP
         base_HP = ext_HP.blue_base_HP
     # print("                               HP:", robot_HP)
-
-
-def game_hurt_callback(ext_hurt):
-    global target_spinning_speed
-    if ext_hurt.hurt_type == 0:
-        target_spinning_speed = 26000
 
 
 def game_command_callback(ext_command):
@@ -161,30 +153,40 @@ def cnt_timer_callback(event):
 
 
 def target_location_callback(event):
-    pass
-    # global target_x, target_y
-    # if target_x == 0:
-    #     target_x = 2.2
-    # else:
-    #     target_x = 0
+    # pass
+    global target_x, target_y
+    if target_x == 0:
+        target_x = 2.2
+    else:
+        target_x = 0
 
 
-def target_xyz_timer_callback(event):
+def target_xyz_callback():
     global base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt, target_yaw, current_yaw, target_x, target_y
     target_pose = PoseStamped()
     target_pose.header.frame_id = "map"
     frame_target_yaw = 0.0
     # if pow(current_x - target_x, 2) + pow(current_y - target_y, 2) > 1:
     #     return
-    if hurt_lock_pos_cnt > 0:
+    if aim_lock_pos_cnt > 0:
+        target_pose.pose.position.x = current_x
+        target_pose.pose.position.y = current_y
+        frame_target_yaw = current_yaw
+    elif hurt_lock_pos_cnt > 0:
+        target_pose.pose.position.x = current_x  # + random.uniform(-1, 1)
+        target_pose.pose.position.y = current_y  # + random.uniform(-1, 1)
         frame_target_yaw = hurt_angle
-    elif aim_lock_pos_cnt > 0:
-        pass
     else:
-        target_yaw = current_yaw + 1.5
         target_pose.pose.position.x = target_x
         target_pose.pose.position.y = target_y
+        target_yaw = target_yaw + 1.75
+        if target_yaw <= 17.5:
+            pass
+        else:
+            target_yaw = -17.5
+        frame_target_yaw = target_yaw
 
+    # 发布
     target_pose.pose.position.z = 0
     target_quad = quaternion_from_euler(0, 0, frame_target_yaw)
     target_pose.pose.orientation.x = target_quad[0]
@@ -194,6 +196,10 @@ def target_xyz_timer_callback(event):
     location_target_publisher.publish(target_pose)
 
     # print('current pose:', current_yaw, 'target pose:', target_yaw)
+
+
+def target_xyz_timer_callback(event):
+    target_xyz_callback()
 
 
 def spin_timer_callback(event):
@@ -207,6 +213,15 @@ def spin_timer_callback(event):
         spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
     # spin_speed_msg.spinning_speed = 0
     spin_speed_publisher.publish(spin_speed_msg)
+
+
+def game_hurt_callback(ext_hurt):
+    global target_spinning_speed, hurt_angle, armor0_angle, hurt_lock_pos_cnt
+    if ext_hurt.hurt_type == 0:
+        target_spinning_speed = 26000
+        hurt_angle = armor0_angle + ext_hurt.armor_id * 1.571
+        hurt_lock_pos_cnt = 1.5
+        target_xyz_callback()
 
 
 def tf_get_timer_callback(event):
@@ -225,14 +240,15 @@ def pitch_timer_callback(event):
     global pitch_state, pitch_scan
     if pitch_state == 0:
         pitch_scan = pitch_scan + 6
-        recommend_pitch_publisher.publish(pitch_scan)
         if pitch_scan > 10.0:
             pitch_state = 1
-    if pitch_state == 1:
+    elif pitch_state == 1:
         pitch_scan = pitch_scan - 6
-        recommend_pitch_publisher.publish(pitch_scan)
         if pitch_scan < -20.0:
             pitch_state = 0
+    else:
+        pass
+    recommend_pitch_publisher.publish(pitch_scan)
 
 
 if __name__ == '__main__':

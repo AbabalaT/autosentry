@@ -191,7 +191,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     //cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
     pcl::VoxelGrid <pcl::PointXYZ> filter;
     filter.setInputCloud(pcl2cloud_out);
-    filter.setLeafSize(0.03f, 0.03f, 0.03f);
+    filter.setLeafSize(0.05f, 0.05f, 0.1f);
     filter.filter(*pcl2cloud_out);
 
     pcl::toROSMsg(*pcl2cloud_out, ROSPCL_output);
