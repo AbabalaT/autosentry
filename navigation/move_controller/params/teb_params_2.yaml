@@ -6,7 +6,7 @@ TebLocalPlannerROS:
 
   teb_autosize: True
   dt_ref: 0.3
-  dt_hysteresis: 0.1   #根据当前时间分辨率自动调整大小的滞后现象，通常约为。建议使用dt ref的10%。
+  dt_hysteresis: 0.06   #根据当前时间分辨率自动调整大小的滞后现象，通常约为。建议使用dt ref的10%。
   max_samples: 500
   global_plan_overwrite_orientation: False
   allow_init_with_backwards_motion: True
@@ -23,8 +23,8 @@ TebLocalPlannerROS:
   max_vel_y: 5
   max_vel_x_backwards: 3.5 #0.5
   max_vel_theta: 3.14  # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
-  acc_lim_x: 6 #0.5############################3  1.1
-  acc_lim_y: 6
+  acc_lim_x: 5 #0.5############################3  1.1
+  acc_lim_y: 5
   acc_lim_theta: 8 #0.5###################### 0.95
 
   # ********************** Carlike robot parameters ********************
@@ -45,8 +45,8 @@ TebLocalPlannerROS:
 
       # GoalTolerance
 
-  xy_goal_tolerance: 0.5
-  yaw_goal_tolerance: 0.5
+  xy_goal_tolerance: 0.3
+  yaw_goal_tolerance: 0.2
   free_goal_vel: False
   complete_global_plan: True
 

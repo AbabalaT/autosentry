@@ -99,7 +99,7 @@ rot = (0.0, 0.0, 0.0, 0.0)
 def auto_aim_callback(ext_aim):
     global aim_lock_pos_cnt, aim_distance
     if ext_aim.target_number != 0:
-        aim_lock_pos_cnt = 1.5
+        aim_lock_pos_cnt = 0.8
         # aim_distance = ext_aim.
 
 
@@ -169,21 +169,20 @@ def target_xyz_callback():
     # if pow(current_x - target_x, 2) + pow(current_y - target_y, 2) > 1:
     #     return
     if aim_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x
-        target_pose.pose.position.y = current_y
+        target_pose.pose.position.x = current_x #+ random.uniform(-0.2, 0.2)
+        target_pose.pose.position.y = current_y #+ random.uniform(-0.2, 0.2)
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x  # + random.uniform(-1, 1)
-        target_pose.pose.position.y = current_y  # + random.uniform(-1, 1)
+        target_pose.pose.position.x = current_x #+ random.uniform(-0.5, 0.5)
+        target_pose.pose.position.y = current_y #+ random.uniform(-0.5, 0.5)
         frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = target_x
         target_pose.pose.position.y = target_y
-        target_yaw = target_yaw + 1.75
-        if target_yaw <= 17.5:
-            pass
-        else:
-            target_yaw = -17.5
+        if abs(target_yaw - current_yaw) <= 0.349:  # 0.349
+            target_yaw = target_yaw + 1.571
+            if target_yaw > 3.14159:
+                target_yaw = target_yaw - 6.2831852
         frame_target_yaw = target_yaw
 
     # 发布
@@ -238,16 +237,19 @@ def tf_get_timer_callback(event):
 
 def pitch_timer_callback(event):
     global pitch_state, pitch_scan
-    if pitch_state == 0:
-        pitch_scan = pitch_scan + 6
-        if pitch_scan > 10.0:
-            pitch_state = 1
-    elif pitch_state == 1:
-        pitch_scan = pitch_scan - 6
-        if pitch_scan < -20.0:
-            pitch_state = 0
-    else:
+    if aim_lock_pos_cnt >= 0:
         pass
+    else:
+        if pitch_state == 0:
+            pitch_scan = pitch_scan + 6
+            if pitch_scan > 10.0:
+                pitch_state = 1
+        elif pitch_state == 1:
+            pitch_scan = pitch_scan - 6
+            if pitch_scan < -20.0:
+                pitch_state = 0
+        else:
+            pass
     recommend_pitch_publisher.publish(pitch_scan)
 
 
