@@ -57,6 +57,10 @@ target_x = 0.0
 target_y = 0.0
 target_yaw = 0.0
 
+pre_target_x = 0.0
+pre_target_y = 0.0
+pre_target_yaw = 0.0
+
 current_x = 0.0
 current_y = 0.0
 current_yaw = 0.0
@@ -163,6 +167,7 @@ def target_location_callback(event):
 
 def target_xyz_callback():
     global base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt, target_yaw, current_yaw, target_x, target_y
+    global pre_target_x, pre_target_y, pre_target_yaw
     target_pose = PoseStamped()
     target_pose.header.frame_id = "map"
     frame_target_yaw = 0.0
@@ -186,13 +191,20 @@ def target_xyz_callback():
         frame_target_yaw = target_yaw
 
     # 发布
+    if target_pose.pose.position.x == pre_target_x:
+        if target_pose.pose.position.y == pre_target_y:
+            if frame_target_yaw == pre_target_yaw:
+                return
+    pre_target_x = target_pose.pose.position.x
+    pre_target_y = target_pose.pose.position.y
+    pre_target_yaw = frame_target_yaw
     target_pose.pose.position.z = 0
     target_quad = quaternion_from_euler(0, 0, frame_target_yaw)
     target_pose.pose.orientation.x = target_quad[0]
     target_pose.pose.orientation.y = target_quad[1]
     target_pose.pose.orientation.z = target_quad[2]
     target_pose.pose.orientation.w = target_quad[3]
-    location_target_publisher.publish(target_pose)
+    # location_target_publisher.publish(target_pose)
 
     # print('current pose:', current_yaw, 'target pose:', target_yaw)
 
@@ -216,11 +228,12 @@ def spin_timer_callback(event):
 
 def game_hurt_callback(ext_hurt):
     global target_spinning_speed, hurt_angle, armor0_angle, hurt_lock_pos_cnt
-    if ext_hurt.hurt_type == 0:
-        target_spinning_speed = 26000
-        hurt_angle = armor0_angle + ext_hurt.armor_id * 1.571
-        hurt_lock_pos_cnt = 1.5
-        target_xyz_callback()
+    if hurt_lock_pos_cnt < 1.0:
+        if ext_hurt.hurt_type == 0:
+            target_spinning_speed = 26000
+            hurt_angle = armor0_angle + ext_hurt.armor_id * 1.571
+            hurt_lock_pos_cnt = 1.5
+            target_xyz_callback()
 
 
 def tf_get_timer_callback(event):

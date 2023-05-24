@@ -1,6 +1,6 @@
 GlobalPlanner:
   allow_unknown: true # 是否允许规划器规划穿过未知区域的路径,只设计该参数为true还不行,还要在costmap_commons_params.yaml中设置track_unknown_space参数也为true才行.
-  default_tolerance: 2.0 #0.05 # 当设置的目的地被障碍物占据时,需要以该参数为半径寻找到最近的点作为新目的地点
+  default_tolerance: 1.0 #0.05 # 当设置的目的地被障碍物占据时,需要以该参数为半径寻找到最近的点作为新目的地点
   use_dijkstra: true #true # 设置为true,将使用dijkstra算法,否则使用A*算法 false true
   use_quadratic: true #false  #true # 设置为true,将使用二次函数近似函数,否则使用更加简单的计算方式,这样节省硬件计算资源  false
   use_grid_path: false #false # 如果设置为true,则会规划一条沿着网格边界的路径,偏向于直线穿越网格,否则将使用梯度下降算法,路径更为光滑点
