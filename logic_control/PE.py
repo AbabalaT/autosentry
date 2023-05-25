@@ -29,10 +29,13 @@ aim_distance = 0
 
 remain_time = 300
 require_add_HP = 0
-robot_HP = 600
+self_robot_HP = 600
+
+self_outpost_HP = 0
 
 pre_base_HP = 1500
-base_HP = 1500
+
+self_base_HP = 1500
 
 self_color = 'blue'
 
@@ -43,10 +46,15 @@ hurt_lock_pos_cnt = 0
 aim_lock_pos_cnt = 0
 follow_enemy_cnt = 0
 
-strategy_state = 0
+enemy_1_cnt = 0
+enemy_2_cnt = 0
+enemy_3_cnt = 0
+enemy_4_cnt = 0
+enemy_5_cnt = 0
 
-seq_1 = 0
-seq_2 = 0
+strategy_state = 0  # 0： 防御模式 1： 攻击模式 2： 视觉拖曳
+
+command_cnt = 0.0
 
 hurt_armor = 0  # 受击装甲
 chassis_angle = 0.0  # 底盘角度
@@ -117,19 +125,54 @@ def game_status_callback(ext_status):
 
 def game_HP_callback(ext_HP):
     # pass
-    global robot_HP
-    global base_HP
+    global self_robot_HP, self_base_HP, self_outpost_HP
+    global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt
     if self_color == 'red':
-        robot_HP = ext_HP.red_7_robot_HP
-        base_HP = ext_HP.red_base_HP
+        self_robot_HP = ext_HP.red_7_robot_HP
+        self_base_HP = ext_HP.red_base_HP
+        self_outpost_HP = ext_HP.red_outpost_HP
+
+        if ext_HP.blue_1_robot_HP == 0:
+            enemy_1_cnt = 10
+        if ext_HP.blue_2_robot_HP == 0:
+            enemy_2_cnt = 10
+        if ext_HP.blue_3_robot_HP == 0:
+            enemy_3_cnt = 10
+        if ext_HP.blue_4_robot_HP == 0:
+            enemy_4_cnt = 10
+        if ext_HP.blue_5_robot_HP == 0:
+            enemy_5_cnt = 10
     else:
-        robot_HP = ext_HP.blue_7_robot_HP
-        base_HP = ext_HP.blue_base_HP
+        self_robot_HP = ext_HP.blue_7_robot_HP
+        self_base_HP = ext_HP.blue_base_HP
+        self_outpost_HP = ext_HP.blue_outpost_HP
+
+        if ext_HP.red_1_robot_HP == 0:
+            enemy_1_cnt = 10
+        if ext_HP.red_2_robot_HP == 0:
+            enemy_2_cnt = 10
+        if ext_HP.red_3_robot_HP == 0:
+            enemy_3_cnt = 10
+        if ext_HP.red_4_robot_HP == 0:
+            enemy_4_cnt = 10
+        if ext_HP.red_5_robot_HP == 0:
+            enemy_5_cnt = 10
     # print("                               HP:", robot_HP)
 
 
-def game_command_callback(ext_command):
+def auto_aim_select_callback(event):
     pass
+
+
+def game_command_callback(ext_command):
+    global command_cnt, target_x, target_y
+    if self_color == 'blue':
+        target_x = 22.1 - ext_command.target_position_x
+        target_y = 8.0 - ext_command.target_position_y
+    else:
+        target_x = ext_command.target_position_x - 5.8
+        target_y = ext_command.target_position_y - 8.0
+    command_cnt = 30.0
 
 
 def chassis_angle_callback(ext_chassis_angle):
@@ -149,11 +192,13 @@ def chassis_angle_callback(ext_chassis_angle):
 
 
 def cnt_timer_callback(event):
-    global hurt_lock_pos_cnt, aim_lock_pos_cnt
+    global hurt_lock_pos_cnt, aim_lock_pos_cnt, command_cnt
     if hurt_lock_pos_cnt > 0:
         hurt_lock_pos_cnt = hurt_lock_pos_cnt - 0.1
     if aim_lock_pos_cnt > 0:
         aim_lock_pos_cnt = aim_lock_pos_cnt - 0.1
+    if command_cnt > 0:
+        command_cnt = command_cnt - 0.1
 
 
 def target_location_callback(event):
@@ -165,8 +210,33 @@ def target_location_callback(event):
         target_x = 0
 
 
+def death_robot_callback(event):
+    global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt
+
+    if enemy_1_cnt > 0:
+        enemy_1_cnt = enemy_1_cnt - 0.5
+    else:
+        enemy_1_cnt = 0
+    if enemy_2_cnt > 0:
+        enemy_2_cnt = enemy_2_cnt - 0.5
+    else:
+        enemy_2_cnt = 0
+    if enemy_3_cnt > 0:
+        enemy_3_cnt = enemy_3_cnt - 0.5
+    else:
+        enemy_3_cnt = 0
+    if enemy_4_cnt > 0:
+        enemy_4_cnt = enemy_4_cnt - 0.5
+    else:
+        enemy_4_cnt = 0
+    if enemy_5_cnt > 0:
+        enemy_5_cnt = enemy_5_cnt - 0.5
+    else:
+        enemy_5_cnt = 0
+
+
 def target_xyz_callback():
-    global base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt, target_yaw, current_yaw, target_x, target_y
+    global self_base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt, target_yaw, current_yaw, target_x, target_y
     global pre_target_x, pre_target_y, pre_target_yaw
     target_pose = PoseStamped()
     target_pose.header.frame_id = "map"
@@ -174,12 +244,12 @@ def target_xyz_callback():
     # if pow(current_x - target_x, 2) + pow(current_y - target_y, 2) > 1:
     #     return
     if aim_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x #+ random.uniform(-0.2, 0.2)
-        target_pose.pose.position.y = current_y #+ random.uniform(-0.2, 0.2)
+        target_pose.pose.position.x = current_x  # + random.uniform(-0.2, 0.2)
+        target_pose.pose.position.y = current_y  # + random.uniform(-0.2, 0.2)
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x #+ random.uniform(-0.5, 0.5)
-        target_pose.pose.position.y = current_y #+ random.uniform(-0.5, 0.5)
+        target_pose.pose.position.x = current_x  # + random.uniform(-0.5, 0.5)
+        target_pose.pose.position.y = current_y  # + random.uniform(-0.5, 0.5)
         frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = target_x
@@ -285,7 +355,7 @@ if __name__ == '__main__':
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
     timer_05 = rospy.Timer(rospy.Duration(8), target_location_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
-
+    timer_07 = rospy.Timer(rospy.Duration(0.5), death_robot_callback)
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)
