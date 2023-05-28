@@ -19,6 +19,7 @@ from geometry_msgs.msg import PoseStamped
 
 from serial_robot.msg import aim
 from serial_robot.msg import spinning_control
+from serial_robot.msg import armor_select
 
 from serial_referee.msg import message_game_command
 from serial_referee.msg import message_game_HP
@@ -26,6 +27,9 @@ from serial_referee.msg import message_game_status
 from serial_referee.msg import message_game_hurt
 
 aim_distance = 0
+
+pitch_scan_low = -20.0
+pitch_scan_up = 10.0
 
 remain_time = 300
 require_add_HP = 0
@@ -113,6 +117,10 @@ trans = (0.0, 0.0, 0.0)
 rot = (0.0, 0.0, 0.0, 0.0)
 
 
+def armor_select_callback(event):
+    aim_select_msg = 
+
+
 def auto_aim_callback(ext_aim):
     global aim_lock_pos_cnt, aim_distance
     if ext_aim.target_number != 0:
@@ -172,7 +180,8 @@ def game_HP_callback(ext_HP):
 
 
 def auto_aim_select_callback(event):
-
+    armor_select_msg = armor_select()
+    
     pass
 
 
@@ -226,23 +235,23 @@ def death_robot_callback(event):
     global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt
 
     if enemy_1_cnt > 0:
-        enemy_1_cnt = enemy_1_cnt - 0.5
+        enemy_1_cnt = enemy_1_cnt - 1
     else:
         enemy_1_cnt = 0
     if enemy_2_cnt > 0:
-        enemy_2_cnt = enemy_2_cnt - 0.5
+        enemy_2_cnt = enemy_2_cnt - 1
     else:
         enemy_2_cnt = 0
     if enemy_3_cnt > 0:
-        enemy_3_cnt = enemy_3_cnt - 0.5
+        enemy_3_cnt = enemy_3_cnt - 1
     else:
         enemy_3_cnt = 0
     if enemy_4_cnt > 0:
-        enemy_4_cnt = enemy_4_cnt - 0.5
+        enemy_4_cnt = enemy_4_cnt - 1
     else:
         enemy_4_cnt = 0
     if enemy_5_cnt > 0:
-        enemy_5_cnt = enemy_5_cnt - 0.5
+        enemy_5_cnt = enemy_5_cnt - 1
     else:
         enemy_5_cnt = 0
 
@@ -337,11 +346,11 @@ def pitch_timer_callback(event):
     else:
         if pitch_state == 0:
             pitch_scan = pitch_scan + 6
-            if pitch_scan > 10.0:
+            if pitch_scan > pitch_scan_up:
                 pitch_state = 1
         elif pitch_state == 1:
             pitch_scan = pitch_scan - 6
-            if pitch_scan < -20.0:
+            if pitch_scan < pitch_scan_low:
                 pitch_state = 0
         else:
             pass
@@ -367,7 +376,7 @@ if __name__ == '__main__':
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
     timer_05 = rospy.Timer(rospy.Duration(8), target_location_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
-    timer_07 = rospy.Timer(rospy.Duration(0.5), death_robot_callback)
+    timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)
