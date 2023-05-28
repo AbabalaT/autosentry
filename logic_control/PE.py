@@ -30,12 +30,15 @@ aim_distance = 0
 remain_time = 300
 require_add_HP = 0
 self_robot_HP = 600
-
-self_outpost_HP = 0
+self_outpost_HP = 1500
 
 pre_base_HP = 1500
 
-self_base_HP = 1500
+self_base_HP = 5000
+
+enemy_robot_HP = 600
+enemy_outpost_HP = 1500
+enemy_base_HP = 5000
 
 self_color = 'blue'
 
@@ -51,6 +54,8 @@ enemy_2_cnt = 0
 enemy_3_cnt = 0
 enemy_4_cnt = 0
 enemy_5_cnt = 0
+
+gimbal_control_cnt = 0
 
 strategy_state = 0  # 0： 防御模式 1： 攻击模式 2： 视觉拖曳
 
@@ -100,7 +105,7 @@ game_status = 0
 '''
 
 target_spinning_speed = 0  # 期望小陀螺速度
-lowest_spinning_speed = 6000
+lowest_spinning_speed = 9000
 
 self_aim_state = 0
 
@@ -125,12 +130,15 @@ def game_status_callback(ext_status):
 
 def game_HP_callback(ext_HP):
     # pass
-    global self_robot_HP, self_base_HP, self_outpost_HP
+    global self_robot_HP, self_base_HP, self_outpost_HP, enemy_robot_HP, enemy_base_HP, enemy_outpost_HP
     global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt
     if self_color == 'red':
         self_robot_HP = ext_HP.red_7_robot_HP
         self_base_HP = ext_HP.red_base_HP
         self_outpost_HP = ext_HP.red_outpost_HP
+        enemy_robot_HP = ext_HP.blue_7_robot_HP
+        enemy_base_HP = ext_HP.blue_base_HP
+        enemy_outpost_HP = ext_HP.blue_outpost_HP
 
         if ext_HP.blue_1_robot_HP == 0:
             enemy_1_cnt = 10
@@ -146,6 +154,9 @@ def game_HP_callback(ext_HP):
         self_robot_HP = ext_HP.blue_7_robot_HP
         self_base_HP = ext_HP.blue_base_HP
         self_outpost_HP = ext_HP.blue_outpost_HP
+        enemy_robot_HP = ext_HP.red_7_robot_HP
+        enemy_base_HP = ext_HP.red_base_HP
+        enemy_outpost_HP = ext_HP.red_outpost_HP
 
         if ext_HP.red_1_robot_HP == 0:
             enemy_1_cnt = 10
@@ -161,6 +172,7 @@ def game_HP_callback(ext_HP):
 
 
 def auto_aim_select_callback(event):
+
     pass
 
 
@@ -177,7 +189,7 @@ def game_command_callback(ext_command):
 
 def chassis_angle_callback(ext_chassis_angle):
     global chassis_angle, armor0_angle
-    rad_angle = (ext_chassis_angle.data - 7189.00) / 8192.00 * 6.2831852
+    rad_angle = (ext_chassis_angle.data - 6445.00) / 8192.00 * 6.2831852
     if rad_angle < 0:
         rad_angle = rad_angle + 6.2831852
     chassis_angle = rad_angle
@@ -275,7 +287,7 @@ def target_xyz_callback():
     target_pose.pose.orientation.z = target_quad[2]
     target_pose.pose.orientation.w = target_quad[3]
     # location_target_publisher.publish(target_pose)
-
+we
     # print('current pose:', current_yaw, 'target pose:', target_yaw)
 
 

@@ -3,6 +3,9 @@ project(oak_imu)
 
 # add_compile_options(-std=c++11)
 set(ROS_BUILD_TYPE Debug)
+
+set(depthai_DIR "/home/ckyf/depthai-core/build")
+
 add_definitions(-DCALIBRATION_PATH="${PROJECT_SOURCE_DIR}/params/camera/")
 
 find_package(depthai REQUIRED)
@@ -16,7 +19,7 @@ find_package(
 )
 
 catkin_package(
-        INCLUDE_DIRS include
+#        INCLUDE_DIRS include
         LIBRARIES spectacular_ai
         CATKIN_DEPENDS geometry_msgs roscpp sensor_msgs std_msgs depthai_bridge
         DEPENDS OpenCV
