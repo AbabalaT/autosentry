@@ -118,7 +118,44 @@ rot = (0.0, 0.0, 0.0, 0.0)
 
 
 def armor_select_callback(event):
-    aim_select_msg = 
+    aim_select_msg = armor_select()
+    if strategy_state == 0:
+        armor_select.aim_1 = 255
+        armor_select.aim_2 = 0
+        armor_select.aim_3 = 255
+        armor_select.aim_4 = 255
+        armor_select.aim_5 = 255
+        armor_select.aim_robot = 0
+        armor_select.aim_base = 0
+        armor_select.aim_outpost = 0
+    elif strategy_state == 1:
+        armor_select.aim_1 = 0
+        armor_select.aim_2 = 0
+        armor_select.aim_3 = 0
+        armor_select.aim_4 = 0
+        armor_select.aim_5 = 0
+        if enemy_outpost_HP > 1:
+            armor_select.aim_outpost = 1
+            armor_select.aim_robot = 0
+            armor_select.aim_base = 0
+        elif enemy_robot_HP > 1:
+            armor_select.aim_outpost = 0
+            armor_select.aim_robot = 1
+            armor_select.aim_base = 0
+        else:
+            armor_select.aim_outpost = 0
+            armor_select.aim_robot = 0
+            armor_select.aim_base = 1
+    elif strategy_state == 2:
+        armor_select.aim_1 = 0
+        armor_select.aim_2 = 0
+        armor_select.aim_3 = 0
+        armor_select.aim_4 = 0
+        armor_select.aim_5 = 0
+        armor_select.aim_robot = 0
+        armor_select.aim_base = 0
+        armor_select.aim_outpost = 0
+    armor_select_publisher.publish(aim_select_msg)
 
 
 def auto_aim_callback(ext_aim):
@@ -363,7 +400,7 @@ if __name__ == '__main__':
     location_target_publisher = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=1)
     recommend_pitch_publisher = rospy.Publisher('/robot/logic_recommend_angle', Float32, queue_size=1)
     spin_speed_publisher = rospy.Publisher('/robot/spnning_speed', spinning_control, queue_size=1)
-
+    armor_select_publisher = rospy.Publisher('/robot/armor_select', armor_select, queue_size=1)
     chassis_angle_sub = rospy.Subscriber('/robot/chassis_angle', Float32, chassis_angle_callback)
     referee_status_sub = rospy.Subscriber('/referee/status', message_game_status, game_status_callback)
     referee_hurt_sub = rospy.Subscriber('/referee/hurt', message_game_hurt, game_hurt_callback)
@@ -377,6 +414,7 @@ if __name__ == '__main__':
     timer_05 = rospy.Timer(rospy.Duration(8), target_location_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
+    timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)
