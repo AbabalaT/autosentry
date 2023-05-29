@@ -118,43 +118,44 @@ rot = (0.0, 0.0, 0.0, 0.0)
 
 
 def armor_select_callback(event):
+    global armor_select_publisher
     aim_select_msg = armor_select()
     if strategy_state == 0:
-        armor_select.aim_1 = 255
-        armor_select.aim_2 = 0
-        armor_select.aim_3 = 255
-        armor_select.aim_4 = 255
-        armor_select.aim_5 = 255
-        armor_select.aim_robot = 0
-        armor_select.aim_base = 0
-        armor_select.aim_outpost = 0
+        aim_select_msg.aim_1 = 255
+        aim_select_msg.aim_2 = 0
+        aim_select_msg.aim_3 = 255
+        aim_select_msg.aim_4 = 255
+        aim_select_msg.aim_5 = 255
+        aim_select_msg.aim_robot = 0
+        aim_select_msg.aim_base = 0
+        aim_select_msg.aim_outpost = 0
     elif strategy_state == 1:
-        armor_select.aim_1 = 0
-        armor_select.aim_2 = 0
-        armor_select.aim_3 = 0
-        armor_select.aim_4 = 0
-        armor_select.aim_5 = 0
+        aim_select_msg.aim_1 = 0
+        aim_select_msg.aim_2 = 0
+        aim_select_msg.aim_3 = 0
+        aim_select_msg.aim_4 = 0
+        aim_select_msg.aim_5 = 0
         if enemy_outpost_HP > 1:
-            armor_select.aim_outpost = 1
-            armor_select.aim_robot = 0
-            armor_select.aim_base = 0
+            aim_select_msg.aim_outpost = 1
+            aim_select_msg.aim_robot = 0
+            aim_select_msg.aim_base = 0
         elif enemy_robot_HP > 1:
-            armor_select.aim_outpost = 0
-            armor_select.aim_robot = 1
-            armor_select.aim_base = 0
+            aim_select_msg.aim_outpost = 0
+            aim_select_msg.aim_robot = 1
+            aim_select_msg.aim_base = 0
         else:
-            armor_select.aim_outpost = 0
-            armor_select.aim_robot = 0
-            armor_select.aim_base = 1
+            aim_select_msg.aim_outpost = 0
+            aim_select_msg.aim_robot = 0
+            aim_select_msg.aim_base = 1
     elif strategy_state == 2:
-        armor_select.aim_1 = 0
-        armor_select.aim_2 = 0
-        armor_select.aim_3 = 0
-        armor_select.aim_4 = 0
-        armor_select.aim_5 = 0
-        armor_select.aim_robot = 0
-        armor_select.aim_base = 0
-        armor_select.aim_outpost = 0
+        aim_select_msg.aim_1 = 0
+        aim_select_msg.aim_2 = 0
+        aim_select_msg.aim_3 = 0
+        aim_select_msg.aim_4 = 0
+        aim_select_msg.aim_5 = 0
+        aim_select_msg.aim_robot = 0
+        aim_select_msg.aim_base = 0
+        aim_select_msg.aim_outpost = 0
     armor_select_publisher.publish(aim_select_msg)
 
 
@@ -333,7 +334,6 @@ def target_xyz_callback():
     target_pose.pose.orientation.z = target_quad[2]
     target_pose.pose.orientation.w = target_quad[3]
     # location_target_publisher.publish(target_pose)
-we
     # print('current pose:', current_yaw, 'target pose:', target_yaw)
 
 
@@ -414,7 +414,7 @@ if __name__ == '__main__':
     timer_05 = rospy.Timer(rospy.Duration(8), target_location_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
-    timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
+    timer_08 = rospy.Timer(rospy.Duration(0.6), armor_select_callback)
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)
