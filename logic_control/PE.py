@@ -83,8 +83,8 @@ chassis_angle = 0.0  # 底盘角度
 armor0_angle = 0.0
 hurt_angle = 0.0
 
-gimbaler_x = todo
-gimbaler_y = todo
+gimbaler_x = 0.0
+gimbaler_y = 0.0
 
 strategy_target_x = 0.0
 strategy_target_y = 0.0
@@ -207,6 +207,8 @@ def armor_select_callback(event):
 
 
 def strategy_callback(event):
+    global warning_cnt, strategy_target_yaw, yaw_scan_state, command_cnt
+    global strategy_target_x, strategy_target_y, strategy_state
     if warning_cnt > 0:
         warning_cnt = warning_cnt - 1
         vector_x = enemy_location_x - current_x
@@ -353,7 +355,7 @@ def death_robot_callback(event):
 
 def target_xyz_callback():
     global self_base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt, target_yaw, current_yaw, target_x, target_y
-    global pre_target_x, pre_target_y, pre_target_yaw
+    global pre_target_x, pre_target_y, pre_target_yaw, yaw_scan_state
     target_pose = PoseStamped()
     target_pose.header.frame_id = "map"
     frame_target_yaw = 0.0
@@ -368,8 +370,8 @@ def target_xyz_callback():
         target_pose.pose.position.y = current_y + random.uniform(-0.5, 0.5)
         frame_target_yaw = hurt_angle
     else:
-        target_pose.pose.position.x = target_x
-        target_pose.pose.position.y = target_y
+        target_pose.pose.position.x = strategy_target_x
+        target_pose.pose.position.y = strategy_target_y
         if abs(target_yaw - current_yaw) <= 0.35:  # 0.349
             if yaw_scan_state == 0:
                 target_yaw = target_yaw + 1.571
@@ -400,7 +402,7 @@ def target_xyz_callback():
     target_pose.pose.orientation.y = target_quad[1]
     target_pose.pose.orientation.z = target_quad[2]
     target_pose.pose.orientation.w = target_quad[3]
-    # location_target_publisher.publish(target_pose)
+    location_target_publisher.publish(target_pose)
     # print('current pose:', current_yaw, 'target pose:', target_yaw)
 
 
@@ -410,17 +412,19 @@ def target_xyz_timer_callback(event):
 
 def game_command_callback(ext_command):
     global command_cnt, target_x, target_y, enemy_location_x, enemy_location_y, warning_cnt
-    if ext_command.command_keyboard == 'A':
+    global strategy_state, yaw_scan_state, gimbaler_x, gimbaler_y
+    if ext_command.command_keyboard == 65:
         strategy_state = 1
         yaw_scan_state = 0
+        command_cnt = 30
         command_cnt = 30
         if self_color == 'blue':
             gimbaler_x = 22.1 - ext_command.target_position_x
             gimbaler_y = 8.0 - ext_command.target_position_y
         else:
             gimbaler_x = ext_command.target_position_x - 5.8
-            gimbaler_y = ext_command.target_position_y - 8.0 
-    elif ext_command.command_keyboard == 'B':
+            gimbaler_y = ext_command.target_position_y - 8.0
+    elif ext_command.command_keyboard == 66:
         yaw_scan_state = 0
         strategy_state = 0
         command_cnt = 30
@@ -430,7 +434,7 @@ def game_command_callback(ext_command):
         else:
             gimbaler_x = ext_command.target_position_x - 5.8
             gimbaler_y = ext_command.target_position_y - 8.0
-    elif ext_command.command_keyboard == 'I':
+    elif ext_command.command_keyboard == 73:
         warning_cnt = 10
         yaw_scan_state = 1
         if self_color == 'blue':
@@ -439,16 +443,16 @@ def game_command_callback(ext_command):
         else:
             enemy_location_x = ext_command.target_position_x - 5.8
             enemy_location_y = ext_command.target_position_y - 8.0
-    elif ext_command.command_keyboard == 'C':
+    elif ext_command.command_keyboard == 67:
         command_cnt = 30
         strategy_state = 298
     target_xyz_callback()
 
 
 def spin_timer_callback(event):
-    global target_spinning_speed
+    global target_spinning_speed, force_spinning, lowest_spinning_speed
     spin_speed_msg = spinning_control()
-    if force_spinning == True:
+    if force_spinning:
         lowest_spinning_speed = 16000
     elif self_outpost_HP > 50 and game_status == 5:
         lowest_spinning_speed = 0
@@ -464,7 +468,7 @@ def spin_timer_callback(event):
         spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
     # spin_speed_msg.spinning_speed = 0
     spin_speed_publisher.publish(spin_speed_msg)
-
+    print('     Debug:', strategy_target_x, strategy_target_y)
 
 def game_hurt_callback(ext_hurt):
     global target_spinning_speed, hurt_angle, armor0_angle, hurt_lock_pos_cnt
@@ -496,6 +500,7 @@ def pitch_timer_callback(event):
     else:
         pitch_scan_low = -20.0
         pitch_scan_up = 15
+
     if aim_lock_pos_cnt >= 0:
         pass
     else:
