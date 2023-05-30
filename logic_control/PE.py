@@ -5,6 +5,7 @@ import sys
 import tty, termios
 import roslib
 import threading
+import math
 
 import random
 import rospy
@@ -26,10 +27,22 @@ from serial_referee.msg import message_game_HP
 from serial_referee.msg import message_game_status
 from serial_referee.msg import message_game_hurt
 
+todo = 0
+
+kill_enemy_engineer = False
+invincible_detect = True
+kill_sentry_first = True
+
 aim_distance = 0
+
+warning_cnt = 0
 
 pitch_scan_low = -20.0
 pitch_scan_up = 10.0
+
+yaw_scan_low = 0.0
+yaw_scan_up = 0.0
+yaw_scan_state = 0 # 0：周扫描 1：扇正扫 2：扇反扫
 
 remain_time = 300
 require_add_HP = 0
@@ -70,6 +83,16 @@ chassis_angle = 0.0  # 底盘角度
 armor0_angle = 0.0
 hurt_angle = 0.0
 
+gimbaler_x = todo
+gimbaler_y = todo
+
+strategy_target_x = 0.0
+strategy_target_y = 0.0
+strategy_target_yaw = 0.0
+
+enemy_location_x = 0.0
+enemy_location_y = 0.0
+
 target_x = 0.0
 target_y = 0.0
 target_yaw = 0.0
@@ -109,7 +132,8 @@ game_status = 0
 '''
 
 target_spinning_speed = 0  # 期望小陀螺速度
-lowest_spinning_speed = 9000
+lowest_spinning_speed = 12000
+force_spinning = False
 
 self_aim_state = 0
 
@@ -122,7 +146,10 @@ def armor_select_callback(event):
     aim_select_msg = armor_select()
     if strategy_state == 0:
         aim_select_msg.aim_1 = 255
-        aim_select_msg.aim_2 = 0
+        if kill_enemy_engineer:
+            aim_select_msg.aim_2 = 255
+        else:
+            aim_select_msg.aim_2 = 0
         aim_select_msg.aim_3 = 255
         aim_select_msg.aim_4 = 255
         aim_select_msg.aim_5 = 255
@@ -135,14 +162,23 @@ def armor_select_callback(event):
         aim_select_msg.aim_3 = 0
         aim_select_msg.aim_4 = 0
         aim_select_msg.aim_5 = 0
-        if enemy_outpost_HP > 1:
+        if enemy_outpost_HP > 0:
             aim_select_msg.aim_outpost = 1
             aim_select_msg.aim_robot = 0
             aim_select_msg.aim_base = 0
-        elif enemy_robot_HP > 1:
+        elif enemy_robot_HP > 0 and enemy_base_HP == 5000:
             aim_select_msg.aim_outpost = 0
             aim_select_msg.aim_robot = 1
             aim_select_msg.aim_base = 0
+        elif enemy_robot_HP > 0 and enemy_base_HP != 5000:
+            if kill_sentry_first :
+                aim_select_msg.aim_outpost = 0
+                aim_select_msg.aim_robot = 1
+                aim_select_msg.aim_base = 0
+            else:
+                aim_select_msg.aim_outpost = 0
+                aim_select_msg.aim_robot = 0
+                aim_select_msg.aim_base = 1
         else:
             aim_select_msg.aim_outpost = 0
             aim_select_msg.aim_robot = 0
@@ -156,7 +192,54 @@ def armor_select_callback(event):
         aim_select_msg.aim_robot = 0
         aim_select_msg.aim_base = 0
         aim_select_msg.aim_outpost = 0
+    if invincible_detect:
+        if enemy_1_cnt > 1:
+            aim_select_msg.aim_1 = 0
+        if enemy_2_cnt > 1:
+            aim_select_msg.aim_2 = 0
+        if enemy_3_cnt > 1:
+            aim_select_msg.aim_3 = 0
+        if enemy_4_cnt > 1:
+            aim_select_msg.aim_4 = 0
+        if enemy_5_cnt > 1:
+            aim_select_msg.aim_5 = 0
     armor_select_publisher.publish(aim_select_msg)
+
+
+def strategy_callback(event):
+    if warning_cnt > 0:
+        warning_cnt = warning_cnt - 1
+        vector_x = enemy_location_x - current_x
+        vector_y = enemy_location_y - current_y
+        vector_theta = math.atan(vector_y/vector_x)
+        if vector_x < 0:
+            if vector_y > 0:
+                vector_theta = vector_theta + 3.1415926
+            else:
+                vector_theta = vector_theta - 3.1415926
+        strategy_target_yaw = vector_theta
+    if warning_cnt < 0:
+        warning_cnt = 0
+    if warning_cnt == 0:
+        yaw_scan_state = 0
+
+    if command_cnt > 0:
+        command_cnt = command_cnt - 1
+        strategy_target_x = gimbaler_x
+        strategy_target_y = gimbaler_y
+    elif game_status != 4:
+        strategy_state = 0
+        strategy_target_x = 0.0
+        strategy_target_y = 0.0
+    elif self_outpost_HP < 750:
+            strategy_state = 0
+            strategy_target_x = 0.0
+            strategy_target_y = 0.0
+    elif remain_time > 420:
+            strategy_state = 1
+            strategy_target_x = todo
+            strategy_target_y = todo
+            strategy_target_yaw = todo
 
 
 def auto_aim_callback(ext_aim):
@@ -217,26 +300,9 @@ def game_HP_callback(ext_HP):
     # print("                               HP:", robot_HP)
 
 
-def auto_aim_select_callback(event):
-    armor_select_msg = armor_select()
-    
-    pass
-
-
-def game_command_callback(ext_command):
-    global command_cnt, target_x, target_y
-    if self_color == 'blue':
-        target_x = 22.1 - ext_command.target_position_x
-        target_y = 8.0 - ext_command.target_position_y
-    else:
-        target_x = ext_command.target_position_x - 5.8
-        target_y = ext_command.target_position_y - 8.0
-    command_cnt = 30.0
-
-
 def chassis_angle_callback(ext_chassis_angle):
     global chassis_angle, armor0_angle
-    rad_angle = (ext_chassis_angle.data - 6445.00) / 8192.00 * 6.2831852
+    rad_angle = (ext_chassis_angle.data - 6446.00) / 8192.00 * 6.2831852
     if rad_angle < 0:
         rad_angle = rad_angle + 6.2831852
     chassis_angle = rad_angle
@@ -258,15 +324,6 @@ def cnt_timer_callback(event):
         aim_lock_pos_cnt = aim_lock_pos_cnt - 0.1
     if command_cnt > 0:
         command_cnt = command_cnt - 0.1
-
-
-def target_location_callback(event):
-    # pass
-    global target_x, target_y
-    if target_x == 0:
-        target_x = 2.2
-    else:
-        target_x = 0
 
 
 def death_robot_callback(event):
@@ -303,20 +360,30 @@ def target_xyz_callback():
     # if pow(current_x - target_x, 2) + pow(current_y - target_y, 2) > 1:
     #     return
     if aim_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x  # + random.uniform(-0.2, 0.2)
-        target_pose.pose.position.y = current_y  # + random.uniform(-0.2, 0.2)
+        target_pose.pose.position.x = current_x + random.uniform(-0.2, 0.2)
+        target_pose.pose.position.y = current_y + random.uniform(-0.2, 0.2)
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x  # + random.uniform(-0.5, 0.5)
-        target_pose.pose.position.y = current_y  # + random.uniform(-0.5, 0.5)
+        target_pose.pose.position.x = current_x + random.uniform(-0.5, 0.5)
+        target_pose.pose.position.y = current_y + random.uniform(-0.5, 0.5)
         frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = target_x
         target_pose.pose.position.y = target_y
-        if abs(target_yaw - current_yaw) <= 0.349:  # 0.349
-            target_yaw = target_yaw + 1.571
+        if abs(target_yaw - current_yaw) <= 0.35:  # 0.349
+            if yaw_scan_state == 0:
+                target_yaw = target_yaw + 1.571
+            elif yaw_scan_state == 1:
+                target_yaw = strategy_target_yaw - 0.7
+                yaw_scan_state = 2
+            else:
+                target_yaw = strategy_target_yaw + 0.7
+                yaw_scan_state = 1
+
             if target_yaw > 3.14159:
                 target_yaw = target_yaw - 6.2831852
+            if target_yaw < -3.14159:
+                target_yaw = target_yaw + 6.2881852
         frame_target_yaw = target_yaw
 
     # 发布
@@ -341,13 +408,58 @@ def target_xyz_timer_callback(event):
     target_xyz_callback()
 
 
+def game_command_callback(ext_command):
+    global command_cnt, target_x, target_y, enemy_location_x, enemy_location_y, warning_cnt
+    if ext_command.command_keyboard == 'A':
+        strategy_state = 1
+        yaw_scan_state = 0
+        command_cnt = 30
+        if self_color == 'blue':
+            gimbaler_x = 22.1 - ext_command.target_position_x
+            gimbaler_y = 8.0 - ext_command.target_position_y
+        else:
+            gimbaler_x = ext_command.target_position_x - 5.8
+            gimbaler_y = ext_command.target_position_y - 8.0 
+    elif ext_command.command_keyboard == 'B':
+        yaw_scan_state = 0
+        strategy_state = 0
+        command_cnt = 30
+        if self_color == 'blue':
+            gimbaler_x = 22.1 - ext_command.target_position_x
+            gimbaler_y = 8.0 - ext_command.target_position_y
+        else:
+            gimbaler_x = ext_command.target_position_x - 5.8
+            gimbaler_y = ext_command.target_position_y - 8.0
+    elif ext_command.command_keyboard == 'I':
+        warning_cnt = 10
+        yaw_scan_state = 1
+        if self_color == 'blue':
+            enemy_location_x = 22.1 - ext_command.target_position_x
+            enemy_location_y = 8.0 - ext_command.target_position_y
+        else:
+            enemy_location_x = ext_command.target_position_x - 5.8
+            enemy_location_y = ext_command.target_position_y - 8.0
+    elif ext_command.command_keyboard == 'C':
+        command_cnt = 30
+        strategy_state = 298
+    target_xyz_callback()
+
+
 def spin_timer_callback(event):
     global target_spinning_speed
     spin_speed_msg = spinning_control()
+    if force_spinning == True:
+        lowest_spinning_speed = 16000
+    elif self_outpost_HP > 50 and game_status == 5:
+        lowest_spinning_speed = 0
+    else:
+        lowest_spinning_speed = 16000
+
     if target_spinning_speed > lowest_spinning_speed:
         target_spinning_speed = target_spinning_speed - 2000
     else:
         target_spinning_speed = lowest_spinning_speed
+        
     if lowest_spinning_speed != 0:
         spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
     # spin_speed_msg.spinning_speed = 0
@@ -373,11 +485,17 @@ def tf_get_timer_callback(event):
         current_yaw = (euler_from_quaternion(rot))[2]
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
         pass
-        # print("logic no TF get !")
+        # print("logic_node no TF get !")
 
 
 def pitch_timer_callback(event):
-    global pitch_state, pitch_scan
+    global pitch_state, pitch_scan, pitch_scan_low, pitch_scan_up
+    if enemy_outpost_HP > 0 and strategy_state == 1:
+        pitch_scan_up = 45
+        pitch_scan_low = 0
+    else:
+        pitch_scan_low = -20.0
+        pitch_scan_up = 15
     if aim_lock_pos_cnt >= 0:
         pass
     else:
@@ -401,20 +519,22 @@ if __name__ == '__main__':
     recommend_pitch_publisher = rospy.Publisher('/robot/logic_recommend_angle', Float32, queue_size=1)
     spin_speed_publisher = rospy.Publisher('/robot/spnning_speed', spinning_control, queue_size=1)
     armor_select_publisher = rospy.Publisher('/robot/armor_select', armor_select, queue_size=1)
+
     chassis_angle_sub = rospy.Subscriber('/robot/chassis_angle', Float32, chassis_angle_callback)
     referee_status_sub = rospy.Subscriber('/referee/status', message_game_status, game_status_callback)
     referee_hurt_sub = rospy.Subscriber('/referee/hurt', message_game_hurt, game_hurt_callback)
     referee_HP_sub = rospy.Subscriber('/referee/HP', message_game_HP, game_HP_callback)
     aim_sub = rospy.Subscriber('/robot/auto_aim', aim, auto_aim_callback)
+    command_sub = rospy.Subscriber('/referee/command', message_game_command, game_command_callback)
 
     timer_01 = rospy.Timer(rospy.Duration(0.5), target_xyz_timer_callback)
     timer_02 = rospy.Timer(rospy.Duration(0.1), pitch_timer_callback)
     timer_03 = rospy.Timer(rospy.Duration(0.1), tf_get_timer_callback)
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
-    timer_05 = rospy.Timer(rospy.Duration(8), target_location_callback)
+    timer_05 = rospy.Timer(rospy.Duration(1), strategy_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
-    timer_08 = rospy.Timer(rospy.Duration(0.6), armor_select_callback)
+    timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)
