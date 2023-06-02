@@ -82,7 +82,6 @@ def autoaim_callback(ext_aim):
     global lock_yaw_cnt, aim_distance
     if ext_aim.target_number != 0:
         lock_yaw_cnt = 2
-        aim_distance = ext_aim.
 
 
 def game_staus_callback(ext_status):

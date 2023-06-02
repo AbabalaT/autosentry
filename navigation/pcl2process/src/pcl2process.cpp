@@ -54,11 +54,11 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     current_x = base2map.transform.translation.x;
     current_y = base2map.transform.translation.y;
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud <pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud<pcl::PointXYZ>);
     sensor_msgs::PointCloud2 ROSPCL_output;
     pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud <pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud<pcl::PointXYZ>);
     unsigned int point_num = 0;
     cv::Mat hight_map(2801, 2801, CV_8UC1, cv::Scalar(0));
     cv::Mat gradient_map(2801, 2801, CV_8UC1, cv::Scalar(0));
@@ -185,11 +185,30 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
             }
         }
     }
+//    pcl::PointXYZ point4push;
+//    for (float x = -5.88; x < 21.8; x = x + 0.05) {
+//        point4push.x = x;
+//        point4push.y = -7.51f;
+//        point4push.z = 0.2f;
+//        pcl2cloud_out->points.push_back(point4push);
+//        point4push.y = 7.24f;
+//        pcl2cloud_out->points.push_back(point4push);
+//        point_num = point_num + 2;
+//    }
+//    for (float y = -7.51; y < 7.24; y = y + 0.05) {
+//        point4push.x = -5.88f;
+//        point4push.y = y;
+//        point4push.z = 0.2f;
+//        pcl2cloud_out->points.push_back(point4push);
+//        point4push.x = 21.8f;
+//        pcl2cloud_out->points.push_back(point4push);
+//        point_num = point_num + 2;
+//    }
     pcl2cloud_out->width = point_num;
     pcl2cloud_out->height = 1;
     pcl2cloud_out->points.resize(pcl2cloud_out->width * pcl2cloud_out->height);
     cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
-    pcl::VoxelGrid <pcl::PointXYZ> filter;
+    pcl::VoxelGrid<pcl::PointXYZ> filter;
     filter.setInputCloud(pcl2cloud_out);
     filter.setLeafSize(0.03f, 0.03f, 0.01f);
     filter.filter(*pcl2cloud_out);
