@@ -388,20 +388,20 @@ def force_moving_callback(event):
         force_speed = Twist()
         if moving_cnt > 0.2:
             if moving_direction == 0:
-                force_speed.linear.x = 0.33
+                force_speed.linear.x = 0.2
                 force_speed.linear.y = 0
                 cmd.angular.z = 0
             elif moving_direction == 1:
                 force_speed.linear.x = 0
-                force_speed.linear.y = 0.33
+                force_speed.linear.y = 0.2
                 cmd.angular.z = 0
             elif moving_direction == 2:
-                force_speed.linear.x = -0.33
+                force_speed.linear.x = -0.2
                 force_speed.linear.y = 0
                 cmd.angular.z = 0
             elif moving_direction == 3:
                 force_speed.linear.x = 0
-                force_speed.linear.y = -0.33
+                force_speed.linear.y = -0.2
                 cmd.angular.z = 0
         else:
             force_speed.linear.x = 0
