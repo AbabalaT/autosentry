@@ -14,7 +14,7 @@ Panels:
         - /Robot1
         - /PointCloud23
       Splitter Ratio: 0.5436619520187378
-    Tree Height: 694
+    Tree Height: 354
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -448,17 +448,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.13666436076164246
-        Y: 0.7544251680374146
-        Z: -2.692406177520752
+        X: 4.251143455505371
+        Y: 0.6783494353294373
+        Z: -2.0657336711883545
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.189796805381775
+      Pitch: 0.7897970676422119
       Target Frame: body
-      Yaw: 4.1031670570373535
+      Yaw: 3.686352491378784
     Saved: ~
 Window Geometry:
   Displays:
