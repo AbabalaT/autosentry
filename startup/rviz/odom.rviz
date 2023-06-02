@@ -11,7 +11,6 @@ Panels:
         - /Imu1
         - /Map1
         - /CostMap1
-        - /CostMap1/Status1
         - /Robot1
         - /PointCloud23
       Splitter Ratio: 0.5436619520187378
@@ -441,7 +440,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 11.712507247924805
+      Distance: 6.20034646987915
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -449,17 +448,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 4.251143455505371
-        Y: 0.6783494353294373
-        Z: -2.0657336711883545
+        X: 0.23185484111309052
+        Y: 0.0821806788444519
+        Z: -3.107858180999756
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6897971630096436
+      Pitch: 1.454796314239502
       Target Frame: body
-      Yaw: 3.941349744796753
+      Yaw: 3.781362533569336
     Saved: ~
 Window Geometry:
   Displays:
