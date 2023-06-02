@@ -59,7 +59,7 @@ enemy_robot_HP = 600
 enemy_outpost_HP = 1500
 enemy_base_HP = 5000
 
-self_color = 'blue'
+self_color = 'red'
 
 hurt_lock_pos_cnt = 0
 aim_lock_pos_cnt = 0
@@ -340,6 +340,7 @@ def game_command_callback(ext_command):
     global strategy_state, yaw_scan_state, commander_x, commander_y, aim_switch
     global force_spinning, kill_sentry_first, kill_enemy_engineer, invincible_detect
     global moving_cnt, moving_direction
+
     if self_color == 'blue':
         commander_x = 22.1 - ext_command.target_position_x
         commander_y = 8.0 - ext_command.target_position_y
@@ -390,23 +391,23 @@ def force_moving_callback(event):
             if moving_direction == 0:
                 force_speed.linear.x = 0.2
                 force_speed.linear.y = 0
-                cmd.angular.z = 0
+                force_speed.angular.z = 0
             elif moving_direction == 1:
                 force_speed.linear.x = 0
                 force_speed.linear.y = 0.2
-                cmd.angular.z = 0
+                force_speed.angular.z = 0
             elif moving_direction == 2:
                 force_speed.linear.x = -0.2
                 force_speed.linear.y = 0
-                cmd.angular.z = 0
+                force_speed.angular.z = 0
             elif moving_direction == 3:
                 force_speed.linear.x = 0
                 force_speed.linear.y = -0.2
-                cmd.angular.z = 0
+                force_speed.angular.z = 0
         else:
             force_speed.linear.x = 0
             force_speed.linear.y = 0
-            cmd.angular.z = 0
+            force_speed.angular.z = 0
         force_moving_publisher.publish(force_speed)
 
 
@@ -429,7 +430,7 @@ def spin_timer_callback(event):
         spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
     # spin_speed_msg.spinning_speed = 0
     spin_speed_publisher.publish(spin_speed_msg)
-    print('     Debug:', strategy_target_x, strategy_target_y, 'lowest spinning:', lowest_spinning_speed)
+    print('     Debug:', strategy_target_x, strategy_target_y, 'lowest spinning:', lowest_spinning_speed, force_spinning)
 
 
 def game_hurt_callback(ext_hurt):
