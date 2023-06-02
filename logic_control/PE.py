@@ -368,16 +368,16 @@ def game_command_callback(ext_command):
         force_spinning = True
     
     elif ext_command.command_keyboard == 73:
-        moving_cnt = 3.2
+        moving_cnt = 1.8
         moving_direction = 0
     elif ext_command.command_keyboard == 74:
-        moving_cnt = 3.2
+        moving_cnt = 1.8
         moving_direction = 1
     elif ext_command.command_keyboard == 75:
-        moving_cnt = 3.2
+        moving_cnt = 1.8
         moving_direction = 2
     elif ext_command.command_keyboard == 76:
-        moving_cnt = 3.2
+        moving_cnt = 1.8
         moving_direction = 3
     
     target_xyz_callback()
@@ -385,24 +385,24 @@ def game_command_callback(ext_command):
 def force_moving_callback(event):
     global moving_cnt, moving_direction
     if moving_cnt >= 0:
-        moving_cnt = moving_cnt - 0.1
+        moving_cnt = moving_cnt - 0.04
         force_speed = Twist()
         if moving_cnt > 0.2:
             if moving_direction == 0:
-                force_speed.linear.x = 0.2
+                force_speed.linear.x = 0.4
                 force_speed.linear.y = 0
                 force_speed.angular.z = 0
             elif moving_direction == 1:
                 force_speed.linear.x = 0
-                force_speed.linear.y = 0.2
+                force_speed.linear.y = 0.4
                 force_speed.angular.z = 0
             elif moving_direction == 2:
-                force_speed.linear.x = -0.2
+                force_speed.linear.x = -0.4
                 force_speed.linear.y = 0
                 force_speed.angular.z = 0
             elif moving_direction == 3:
                 force_speed.linear.x = 0
-                force_speed.linear.y = -0.2
+                force_speed.linear.y = -0.4
                 force_speed.angular.z = 0
         else:
             force_speed.linear.x = 0
@@ -462,8 +462,8 @@ def pitch_timer_callback(event):
         pitch_scan_up = 25
         pitch_scan_low = 0
     else:
-        pitch_scan_low = -20.0
-        pitch_scan_up = 15
+        pitch_scan_low = -15.0
+        pitch_scan_up = 5.0
 
     if aim_lock_pos_cnt > 0:
         pass
@@ -503,7 +503,7 @@ if __name__ == '__main__':
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
     timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
-    timer_09 = rospy.Timer(rospy.Duration(0.1), force_moving_callback)
+    timer_09 = rospy.Timer(rospy.Duration(0.04), force_moving_callback)
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)
