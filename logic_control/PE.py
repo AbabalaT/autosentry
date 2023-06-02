@@ -247,23 +247,10 @@ def strategy_callback(event):
         strategy_state = 0
         strategy_target_x = 0.0
         strategy_target_y = 0.0
-    elif self_outpost_HP < 750:
+    elif self_outpost_HP < 10:
         strategy_state = 0
         strategy_target_x = 0.0 + random.uniform(-0.5, 0.5)
         strategy_target_y = 0.0 + random.uniform(-0.5, 0.5)
-    elif remain_time > 395:
-        strategy_state = 0
-        strategy_target_x = 6.46
-        strategy_target_y = 6.37
-        strategy_target_yaw = 0
-        yaw_scan_state = 1
-    elif enemy_outpost_HP > 0:
-        strategy_state = 1
-        strategy_target_x = 6.46
-        strategy_target_y = 6.37
-        strategy_target_yaw = 0
-        warning_cnt = 30
-        yaw_scan_state = 1
 
 
 def auto_aim_callback(ext_aim):
@@ -274,8 +261,7 @@ def auto_aim_callback(ext_aim):
 
 
 def game_status_callback(ext_status):
-    global game_status
-    global remain_time
+    global game_status, remain_time
     game_status = ext_status.game_progress
     remain_time = ext_status.stage_remain_time
     # print("                                               Game Status:", game_status)
