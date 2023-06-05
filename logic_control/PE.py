@@ -59,7 +59,7 @@ enemy_robot_HP = 600
 enemy_outpost_HP = 1500
 enemy_base_HP = 5000
 
-self_color = 'red'
+self_color = 'blue'
 
 hurt_lock_pos_cnt = 0
 aim_lock_pos_cnt = 0
@@ -286,20 +286,20 @@ def target_xyz_callback():
     # if pow(current_x - target_x, 2) + pow(current_y - target_y, 2) > 1:
     #     return
     if aim_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x + random.uniform(-0.2, 0.2)
-        target_pose.pose.position.y = current_y + random.uniform(-0.2, 0.2)
+        target_pose.pose.position.x = strategy_target_x + random.uniform(-0.2, 0.2)
+        target_pose.pose.position.y = strategy_target_y + random.uniform(-0.2, 0.2)
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = current_x + random.uniform(-0.5, 0.5)
-        target_pose.pose.position.y = current_y + random.uniform(-0.5, 0.5)
+        target_pose.pose.position.x = strategy_target_x + random.uniform(-0.5, 0.5)
+        target_pose.pose.position.y = strategy_target_y + random.uniform(-0.5, 0.5)
         frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = strategy_target_x
         target_pose.pose.position.y = strategy_target_y
         if yaw_refresh_idle > 0:
             yaw_refresh_idle = yaw_refresh_idle - 1
-            if abs(target_yaw - current_yaw) <= 0.35:  # 0.349
-                target_yaw = target_yaw + 1.571
+            if abs(target_yaw - current_yaw) <= 0.5:  # 0.349
+                target_yaw = current_yaw + 1.571
                 yaw_refresh_idle = 10
         else:
             target_yaw = target_yaw + 1.571
@@ -459,8 +459,8 @@ def tf_get_timer_callback(event):
 def pitch_timer_callback(event):
     global pitch_state, pitch_scan, pitch_scan_low, pitch_scan_up, aim_switch
     if aim_switch[7] > 0:
-        pitch_scan_up = 25
-        pitch_scan_low = 0
+        pitch_scan_up = 25.0
+        pitch_scan_low = 0.0
     else:
         pitch_scan_low = -15.0
         pitch_scan_up = 5.0
@@ -469,11 +469,11 @@ def pitch_timer_callback(event):
         pass
     else:
         if pitch_state == 0:
-            pitch_scan = pitch_scan + 2
+            pitch_scan = pitch_scan + 0.2
             if pitch_scan > pitch_scan_up:
                 pitch_state = 1
         else:
-            pitch_scan = pitch_scan - 2
+            pitch_scan = pitch_scan - 0.2
             if pitch_scan < pitch_scan_low:
                 pitch_state = 0
     recommend_pitch_publisher.publish(pitch_scan)
@@ -496,7 +496,7 @@ if __name__ == '__main__':
     command_sub = rospy.Subscriber('/referee/command', message_game_command, game_command_callback)
 
     timer_01 = rospy.Timer(rospy.Duration(0.5), target_xyz_timer_callback)
-    timer_02 = rospy.Timer(rospy.Duration(0.1), pitch_timer_callback)
+    timer_02 = rospy.Timer(rospy.Duration(0.0125), pitch_timer_callback)
     timer_03 = rospy.Timer(rospy.Duration(0.1), tf_get_timer_callback)
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
     timer_05 = rospy.Timer(rospy.Duration(1), strategy_callback)
