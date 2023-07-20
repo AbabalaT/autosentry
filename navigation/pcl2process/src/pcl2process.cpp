@@ -14,6 +14,9 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/filters/voxel_grid.h>
 
+#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/features/normal_3d.h>
+
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_ros/transform_listener.h>
@@ -39,6 +42,42 @@ struct PointInt {
 };
 
 float current_x = 0.0, current_y = 0.0;
+
+void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    sensor_msgs::PointCloud2 ROSPCL_output;
+    pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud<pcl::PointXYZ>);
+    if((pcl2cloud->points.size()) == 0){
+        return;
+    }
+    else{
+        pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+        ne.setInputCloud(pcl2cloud);
+        pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
+        ne.setSearchMethod(tree);
+        //存储输出数据
+        pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>);
+        //ne.setRadiusSearch(0.03); //使用半径在查询点周围3厘米范围内的所有临近元素
+        ne.setKSearch(10); //使用最近的10个点
+        ne.compute(*cloud_normals);
+        long point_num = 0;
+        for (long i = 0; i <= pcl2cloud->points.size(); i = i + 1) {
+            float gradient = (pow(cloud_normals->points[i].normal_x, 2) + pow(cloud_normals->points[i].normal_y, 2)) / pow(cloud_normals->points[i].normal_z, 2);
+            if(gradient > 2.0f){
+                pcl2cloud->points[i].z = 0;
+                pcl2cloud_out->points.push_back(pcl2cloud->points[i]);
+                point_num = point_num + 1;
+            }
+        }
+        pcl2cloud_out->width = point_num;
+        pcl2cloud_out->height = 1;
+        pcl2cloud_out->points.resize(pcl2cloud_out->width * pcl2cloud_out->height);
+        pcl::toROSMsg(*pcl2cloud_out, ROSPCL_output);
+        ROSPCL_output.header.frame_id = "map";
+        pcl_publisher.publish(ROSPCL_output);
+    }
+}
 
 void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     std::vector<std::vector<int>> point_list1(2800);
@@ -225,7 +264,7 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "pointcloud_process");
     ros::NodeHandle pnh("~");
     tf2_ros::TransformListener tfListener(tfBuffer);
-    auto subCloud = pnh.subscribe<sensor_msgs::PointCloud2>("/pointcloud2_in", 1, getcloud);
+    auto subCloud = pnh.subscribe<sensor_msgs::PointCloud2>("/pointcloud2_in", 1, getcloud_vec);
     pcl_publisher = pnh.advertise<sensor_msgs::PointCloud2>("/pointcloud2_out", 1);
     ros::spin();
     return 0;

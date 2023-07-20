@@ -14,6 +14,8 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/transform_broadcaster.h>
 
+
+
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
@@ -24,7 +26,7 @@ bool publish_tf = false;
 bool callbacked_flag = false;
 tf2_ros::Buffer tfBuffer;
 
-void project2plane_callback(const nav_msgs::Odometry::ConstPtr& odom_3d){
+void project2plane_callback(const ros::TimerEvent&){
     static tf2_ros::TransformBroadcaster br;
     geometry_msgs::TransformStamped laser2base, base2map;
     try {
@@ -106,7 +108,8 @@ int main(int argc, char **argv) {
     tf2_ros::TransformListener tfListener(tfBuffer);
 //#ifndef USE_CUSTOM_LASER2SCAN
     auto sub1 = pnh.subscribe("/scan", 100, laserCallback);
-    auto odomSub = pnh.subscribe<nav_msgs::Odometry>("//Odometry", 10, project2plane_callback);
+    ros::Timer timer1 = pnh.createTimer(ros::Duration(0.02), project2plane_callback);
+//    auto odomSub = pnh.subscribe<nav_msgs::Odometry>("/Odometry", 10, lidar_to_odom);
 //#else
     //auto sub2 = pnh.subscribe("/depth_image", 100, depth_img_callback);
 //#endif

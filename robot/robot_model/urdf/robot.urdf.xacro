@@ -14,4 +14,16 @@
                           base_frame = "$(arg prefix)oak_back_frame"
                           cam_pos_x = "-0.08" cam_pos_y = "0.0" cam_pos_z = "0.3"
                           cam_roll = "0.0" cam_pitch = "0.0" cam_yaw = "0.0"/>
+
+    <xacro:macro name="mid360">
+          <link name="$(arg prefix)lidar_body"/>
+          <joint name="$(arg prefix)lidar_joint" type="fixed">
+                  <parent link="$(arg prefix)base_link"/>
+                  <child link="$(arg prefix)lidar_body"/>
+                  <origin xyz="0 0 0.6" rpy="0 0 0"/>
+          </joint>
+    </xacro:macro>
+
+    <xacro:mid360/>
+
 </robot>

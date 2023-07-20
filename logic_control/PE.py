@@ -452,8 +452,7 @@ def tf_get_timer_callback(event):
         current_y = trans[1]
         current_yaw = (euler_from_quaternion(rot))[2]
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-        pass
-        # print("logic_node no TF get !")
+        print("logic_node no TF get !")
 
 
 def pitch_timer_callback(event):
