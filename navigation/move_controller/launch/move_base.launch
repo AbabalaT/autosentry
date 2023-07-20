@@ -1,7 +1,7 @@
 <launch>
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find move_controller)/params/map_server.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server"  respawn="true" args="$(find move_controller)/params/map_server.yaml"/>
 
-    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <node pkg="move_base" type="move_base" name="move_base" output="screen"  respawn="true">
         <rosparam file="$(find move_controller)/params/costmap_common.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find move_controller)/params/costmap_common.yaml" command="load" ns="local_costmap" />
 <!--         <rosparam file="$(find move_controller)/params/local_costmap.yaml" command="load" /> -->

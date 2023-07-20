@@ -48,6 +48,18 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     sensor_msgs::PointCloud2 ROSPCL_output;
     pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud_out(new pcl::PointCloud<pcl::PointXYZ>);
+
+    geometry_msgs::TransformStamped base2map;
+    try {
+        base2map = tfBuffer.lookupTransform("map", "base_link", ros::Time(0));
+
+    } catch (tf2::TransformException &ex) {
+        ROS_WARN("Pcl2process Get TF ERROR!");
+        return;
+    }
+    current_x = base2map.transform.translation.x;
+    current_y = base2map.transform.translation.y;
+
     if((pcl2cloud->points.size()) == 0){
         return;
     }
@@ -65,9 +77,11 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
         for (long i = 0; i <= pcl2cloud->points.size(); i = i + 1) {
             float gradient = (pow(cloud_normals->points[i].normal_x, 2) + pow(cloud_normals->points[i].normal_y, 2)) / pow(cloud_normals->points[i].normal_z, 2);
             if(gradient > 2.0f){
-                pcl2cloud->points[i].z = 0;
-                pcl2cloud_out->points.push_back(pcl2cloud->points[i]);
-                point_num = point_num + 1;
+                if(pow(pcl2cloud->points[i].x - current_x, 2) + pow(pcl2cloud->points[i].y - current_y, 2) > 0.09){
+                    pcl2cloud->points[i].z = 0;
+                    pcl2cloud_out->points.push_back(pcl2cloud->points[i]);
+                    point_num = point_num + 1;
+                }
             }
         }
         pcl2cloud_out->width = point_num;
