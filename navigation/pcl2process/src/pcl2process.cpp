@@ -65,6 +65,10 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     }
     else{
         pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
+        pcl::VoxelGrid<pcl::PointXYZ> filter;
+        filter.setInputCloud(pcl2cloud);
+        filter.setLeafSize(0.04f, 0.04f, 0.04f);
+        filter.filter(*pcl2cloud);
         ne.setInputCloud(pcl2cloud);
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
         ne.setSearchMethod(tree);
@@ -76,7 +80,7 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
         long point_num = 0;
         for (long i = 0; i <= pcl2cloud->points.size(); i = i + 1) {
             float gradient = (pow(cloud_normals->points[i].normal_x, 2) + pow(cloud_normals->points[i].normal_y, 2)) / pow(cloud_normals->points[i].normal_z, 2);
-            if(gradient > 2.0f){
+            if(gradient > 1.0f){
                 if(pow(pcl2cloud->points[i].x - current_x, 2) + pow(pcl2cloud->points[i].y - current_y, 2) > 0.09){
                     pcl2cloud->points[i].z = 0;
                     pcl2cloud_out->points.push_back(pcl2cloud->points[i]);
