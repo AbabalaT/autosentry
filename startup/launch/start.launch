@@ -13,7 +13,7 @@
     <include file="$(find pcl2process)/launch/pcl2pro.launch" />
     <include file="$(find move_controller)/launch/move_base.launch" />
     <include file="$(find serial_referee)/launch/referee_serial.launch" />
-    <include file="$(find logic_control)/launch/logic_control.launch" />
+<!--     <include file="$(find logic_control)/launch/logic_control.launch" /> -->
 
 </launch>
 
