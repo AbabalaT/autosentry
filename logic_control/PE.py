@@ -29,6 +29,8 @@ from serial_referee.msg import message_game_hurt
 
 todo = 0
 
+allow_out_cnt = 10.0
+
 kill_enemy_engineer = False
 invincible_detect = True
 kill_sentry_first = True
@@ -139,6 +141,20 @@ self_aim_state = 0
 trans = (0.0, 0.0, 0.0)
 rot = (0.0, 0.0, 0.0, 0.0)
 
+def at_patrol_check(x, y):
+    return 0
+
+def allow_out_timer_callback(event):
+    global allow_out_cnt, self_outpost_HP
+    if(self_outpost_HP > 750):
+        allow_out_cnt = 300.0
+    elif(self_outpost_HP > 450):
+        allow_out_cnt = 15.0
+    elif(at_patrol_check(current_x, current_y) != 0):
+        allow_out_cnt = 10.0
+    else:
+        allow_out_cnt = allow_out_cnt - 0.1
+
 
 def armor_select_callback(event):
     global armor_select_publisher, aim_switch
@@ -161,19 +177,18 @@ def strategy_callback(event):
         strategy_target_x = commander_x
         strategy_target_y = commander_y
     elif game_status != 4:
-        strategy_target_x = 0.0
+        strategy_target_x = -0.5
         strategy_target_y = 0.0
-    elif self_outpost_HP < 10:
-        strategy_target_x = 0.0 + random.uniform(-0.5, 0.5)
+    elif (self_outpost_HP < 10) and (allow_out_cnt <= 0.0):
+        strategy_target_x = -0.5 + random.uniform(-0.5, 0.5)
         strategy_target_y = 0.0 + random.uniform(-0.5, 0.5)
-    print('        strategy_target:', strategy_target_x, strategy_target_y)
+    print('strategy_target:', strategy_target_x, strategy_target_y)
 
 
 def auto_aim_callback(ext_aim):
     global aim_lock_pos_cnt, aim_distance
     if aim_switch[ext_aim.target_number] != 0:
         aim_lock_pos_cnt = 0.8
-
 
 def game_status_callback(ext_status):
     global game_status, remain_time
@@ -247,8 +262,10 @@ def cnt_timer_callback(event):
     global hurt_lock_pos_cnt, aim_lock_pos_cnt, command_cnt
     if hurt_lock_pos_cnt > 0:
         hurt_lock_pos_cnt = hurt_lock_pos_cnt - 0.1
+
     if aim_lock_pos_cnt > 0:
         aim_lock_pos_cnt = aim_lock_pos_cnt - 0.1
+
     if command_cnt > 0:
         command_cnt = command_cnt - 0.1
 
@@ -259,18 +276,22 @@ def death_robot_callback(event):
         enemy_1_cnt = enemy_1_cnt - 1
     else:
         enemy_1_cnt = 0
+
     if enemy_2_cnt > 0:
         enemy_2_cnt = enemy_2_cnt - 1
     else:
         enemy_2_cnt = 0
+
     if enemy_3_cnt > 0:
         enemy_3_cnt = enemy_3_cnt - 1
     else:
         enemy_3_cnt = 0
+
     if enemy_4_cnt > 0:
         enemy_4_cnt = enemy_4_cnt - 1
     else:
         enemy_4_cnt = 0
+
     if enemy_5_cnt > 0:
         enemy_5_cnt = enemy_5_cnt - 1
     else:
@@ -278,7 +299,8 @@ def death_robot_callback(event):
 
 
 def target_xyz_callback():
-    global self_base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt, target_yaw, current_yaw, target_x, target_y
+    global self_base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt
+    global target_yaw, current_yaw, target_x, target_y, hurt_lock_pos_cnt
     global pre_target_x, pre_target_y, pre_target_yaw, yaw_scan_state, target_publish_idle, yaw_refresh_idle
     target_pose = PoseStamped()
     target_pose.header.frame_id = "map"
@@ -379,7 +401,6 @@ def game_command_callback(ext_command):
     elif ext_command.command_keyboard == 76:
         moving_cnt = 1.8
         moving_direction = 3
-    
     target_xyz_callback()
 
 def force_moving_callback(event):
@@ -430,7 +451,7 @@ def spin_timer_callback(event):
         spin_speed_msg.spinning_speed = target_spinning_speed + random.randint(0, 4000)
     # spin_speed_msg.spinning_speed = 0
     spin_speed_publisher.publish(spin_speed_msg)
-    print('     Debug:', strategy_target_x, strategy_target_y, 'lowest spinning:', lowest_spinning_speed, force_spinning)
+    print(strategy_target_x, strategy_target_y, 'lowest spinning:', lowest_spinning_speed, force_spinning)
 
 
 def game_hurt_callback(ext_hurt):
@@ -443,7 +464,6 @@ def game_hurt_callback(ext_hurt):
                 target_spinning_speed = 26000
             target_xyz_callback()
 
-
 def tf_get_timer_callback(event):
     try:
         global trans, rot, current_x, current_y, current_yaw
@@ -453,7 +473,6 @@ def tf_get_timer_callback(event):
         current_yaw = (euler_from_quaternion(rot))[2]
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
         print("logic_node no TF get !")
-
 
 def pitch_timer_callback(event):
     global pitch_state, pitch_scan, pitch_scan_low, pitch_scan_up, aim_switch
@@ -498,11 +517,13 @@ if __name__ == '__main__':
     timer_02 = rospy.Timer(rospy.Duration(0.0125), pitch_timer_callback)
     timer_03 = rospy.Timer(rospy.Duration(0.1), tf_get_timer_callback)
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
-    timer_05 = rospy.Timer(rospy.Duration(1), strategy_callback)
+    timer_05 = rospy.Timer(rospy.Duration(1.0), strategy_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
     timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
     timer_09 = rospy.Timer(rospy.Duration(0.04), force_moving_callback)
+    timer_10 = rospy.Timer(rospy.Duration(0.1), allow_out_timer_callback)
+
     rospy.spin()
 
     recommend_pitch_publisher.publish(0)

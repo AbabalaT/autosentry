@@ -3,58 +3,45 @@
 
 import os
 import sys
+import time
 import tty, termios
 import roslib
 import rospy
+from time import sleep
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String
 
 
 def teleop_key():
-
     thread_stop = False
     cmd = Twist()
-    #roslib.load_manifest('smartcar_teleop')
+    # roslib.load_manifest('smartcar_teleop')
     pub = rospy.Publisher('/cmd_vel', Twist)
     rospy.init_node('key_rc_test_node')
-
-    rate = rospy.Rate(rospy.get_param('~hz', 1))
-    walk_vel_ = 0.6
-    yaw_rate_ = 1
-
-    max_tv = walk_vel_
-    max_rv = yaw_rate_
     turn = 0
     sidewalk = 0
     speed = 0
-
     while (thread_stop == False):
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
-        try :
-            tty.setraw( fd )
+        try:
+            tty.setraw(fd)
             ch = sys.stdin.read(1)
-        finally :
+        finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
         if ch == 'w':
-            max_tv = walk_vel_
             speed = speed + 0.5
         elif ch == 's':
-            max_tv = walk_vel_
             speed = speed - 0.5
         elif ch == 'a':
-            max_rv = yaw_rate_
-            turn = turn + 0.5
+            turn = turn + 0.785
         elif ch == 'd':
-            max_rv = yaw_rate_
-            turn = turn - 0.5
+            turn = turn - 0.785
         elif ch == 'q':
-            max_rv = yaw_rate_
-            sidewalk = sidewalk + 0.785
+            sidewalk = sidewalk + 0.5
         elif ch == 'e':
-            max_rv = yaw_rate_
-            sidewalk = sidewalk - 0.785
+            sidewalk = sidewalk - 0.5
         elif ch == 'p':
             turn = 0
             speed = 0
@@ -63,14 +50,13 @@ def teleop_key():
             turn = 0
             sidewalk = 0
             speed = 0
-            max_tv = walk_vel_
-            max_rv = yaw_rate_
 
-        cmd.linear.x = speed * max_tv
-        cmd.linear.y = sidewalk * max_tv
-        cmd.angular.z = turn * max_rv
+        cmd.linear.x = speed
+        cmd.linear.y = sidewalk
+        cmd.angular.z = turn
+        print('rc speed:', cmd.linear.x, cmd.linear.y, cmd.angular.z)
         pub.publish(cmd)
-        rate.sleep()
+
 
 if __name__ == '__main__':
-    teleop_key() 
+    teleop_key()
