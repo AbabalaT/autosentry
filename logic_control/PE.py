@@ -177,10 +177,10 @@ def strategy_callback(event):
         strategy_target_x = commander_x
         strategy_target_y = commander_y
     elif game_status != 4:
-        strategy_target_x = -0.5
+        strategy_target_x = -0.7
         strategy_target_y = 0.0
     elif (self_outpost_HP < 10) and (allow_out_cnt <= 0.0):
-        strategy_target_x = -0.5 + random.uniform(-0.5, 0.5)
+        strategy_target_x = -0.7 + random.uniform(-0.5, 0.5)
         strategy_target_y = 0.0 + random.uniform(-0.5, 0.5)
     print('strategy_target:', strategy_target_x, strategy_target_y)
 
