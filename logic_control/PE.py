@@ -61,7 +61,7 @@ enemy_robot_HP = 600
 enemy_outpost_HP = 1500
 enemy_base_HP = 5000
 
-self_color = 'blue'
+self_color = 'red'
 
 hurt_lock_pos_cnt = 0
 aim_lock_pos_cnt = 0

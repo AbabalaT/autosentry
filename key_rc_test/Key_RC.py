@@ -56,7 +56,13 @@ def teleop_key():
         cmd.angular.z = turn
         print('rc speed:', cmd.linear.x, cmd.linear.y, cmd.angular.z)
         pub.publish(cmd)
-
+        time.sleep(0.05)
+        pub.publish(cmd)
+        time.sleep(0.05)
+        pub.publish(cmd)
+        time.sleep(0.05)
+        pub.publish(cmd)
+        time.sleep(0.05)
 
 if __name__ == '__main__':
     teleop_key()
