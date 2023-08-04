@@ -61,7 +61,7 @@ enemy_robot_HP = 600
 enemy_outpost_HP = 1500
 enemy_base_HP = 5000
 
-self_color = 'blue'
+self_color = 'red'
 
 hurt_lock_pos_cnt = 0
 aim_lock_pos_cnt = 0
@@ -183,7 +183,7 @@ def strategy_callback(event):
     elif game_status != 4:
         strategy_target_x = -0.7
         strategy_target_y = 0.0
-    elif self_outpost_HP < 10:
+    elif self_outpost_HP < 50:
         strategy_target_x = -0.7 + random.uniform(-0.25, 0.25)
         strategy_target_y = 0.0 + random.uniform(-0.25, 0.25)
     print('strategy_target:', strategy_target_x, strategy_target_y)
@@ -323,8 +323,8 @@ def target_xyz_callback():
         target_pose.pose.position.y = strategy_target_y
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = strategy_target_x # + random.uniform(-0.15, 0.15)
-        target_pose.pose.position.y = strategy_target_y # + random.uniform(-0.15, 0.15)
+        target_pose.pose.position.x = strategy_target_x  # + random.uniform(-0.15, 0.15)
+        target_pose.pose.position.y = strategy_target_y  # + random.uniform(-0.15, 0.15)
         frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = strategy_target_x
@@ -384,13 +384,13 @@ def game_command_callback(ext_command):
     global command_cnt, target_x, target_y, enemy_location_x, enemy_location_y, warning_cnt
     global strategy_state, yaw_scan_state, commander_x, commander_y, aim_switch
     global force_spinning, kill_sentry_first, kill_enemy_engineer, invincible_detect
-    global moving_cnt, moving_direction, force_standby_scanning
+    global moving_cnt, moving_direction, force_standby_scanning, enemy_outpost_HP
     signal_x = 0.0
     signal_y = 0.0
 
     if self_color == 'blue':
-        signal_x = (20.5000 - ext_command.target_position_x) * 1.07
-        signal_y = (8.1200 - ext_command.target_position_y) * 1.07
+        signal_x = (20.50 - ext_command.target_position_x) * 1.07
+        signal_y = (8.12 - ext_command.target_position_y) * 1.07
     else:
         signal_x = (ext_command.target_position_x - 6.87) * 1.07
         signal_y = (ext_command.target_position_y - 8.12) * 1.07
@@ -398,12 +398,55 @@ def game_command_callback(ext_command):
     print('                 ', signal_x, signal_y, ext_command.target_position_x - 0.01,
           ext_command.target_position_y - 0.01)
 
+    if 64 < ext_command.command_keyboard < 68:
+        if self_outpost_HP > 200:
+            command_cnt = 40
+        else:
+            command_cnt = 25
+        commander_x = signal_x
+        commander_y = signal_y
+
     if ext_command.command_keyboard == 65:
-        aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]
+        aim_switch = [0, 1, 1, 1, 1, 1, 1, 0, 0]
     if ext_command.command_keyboard == 66:
         aim_switch = [0, 0, 0, 0, 0, 0, 0, 1, 0]
     if ext_command.command_keyboard == 67:
         aim_switch = [0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+    if ext_command.command_keyboard == 69:
+        commander_x = -0.685
+        commander_y = -3.977
+        command_cnt = 100
+
+    if ext_command.command_keyboard == 70:
+        commander_x = -0.627
+        commander_y = 4.309
+        command_cnt = 100
+
+    if ext_command.command_keyboard == 72:
+        commander_x = -0.7
+        commander_y = 0.0
+        command_cnt = 100
+
+    if ext_command.command_keyboard == 81:
+        commander_x = 6.42
+        commander_y = -5.20
+        command_cnt = 30
+
+    if ext_command.command_keyboard == 82:
+        commander_x = 6.81
+        commander_y = 6.85
+        command_cnt = 40
+        enemy_location_x = 8.52
+        enemy_location_y = 1.11
+        warning_cnt = 40
+
+
+    if enemy_outpost_HP > 5:  # turn off shooting unbeatable target
+        aim_switch[6] = 0
+        aim_switch[8] = 0
+    if enemy_robot_HP > 10:
+        aim_switch[8] = 0
 
     if ext_command.command_keyboard == 88:
         force_standby_scanning = 1
@@ -415,14 +458,6 @@ def game_command_callback(ext_command):
         enemy_location_x = signal_x
         enemy_location_y = signal_y
         warning_cnt = 10.0
-
-    if 64 < ext_command.command_keyboard < 68:
-        if self_outpost_HP > 200:
-            command_cnt = 40
-        else:
-            command_cnt = 25
-        commander_x = signal_x
-        commander_y = signal_y
 
     if ext_command.command_keyboard == 73:
         moving_cnt = 1.8
@@ -493,7 +528,7 @@ def spin_timer_callback(event):
     spin_speed_msg = spinning_control()
     if force_spinning:
         lowest_spinning_speed = 16000
-    elif self_outpost_HP > 0 and game_status == 4:
+    elif self_outpost_HP > 50 and game_status == 4:
         lowest_spinning_speed = 0
     else:
         lowest_spinning_speed = 16000
