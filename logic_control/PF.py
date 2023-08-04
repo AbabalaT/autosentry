@@ -102,11 +102,13 @@ pre_target_x = 0.0
 pre_target_y = 0.0
 pre_target_yaw = 0.0
 
+force_standby_scanning = 0
+
 current_x = 0.0
 current_y = 0.0
 current_yaw = 0.0
 
-aim_switch = [0, 1, 0, 1, 1, 1, 0, 0, 0]
+aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]
 
 '''
 0:待机、 1：攻击、 2：防御
@@ -182,8 +184,8 @@ def strategy_callback(event):
         strategy_target_x = -0.7
         strategy_target_y = 0.0
     elif self_outpost_HP < 10:
-        strategy_target_x = -0.7 + random.uniform(-0.15, 0.15)
-        strategy_target_y = 0.0 + random.uniform(-0.15, 0.15)
+        strategy_target_x = -0.7 + random.uniform(-0.25, 0.25)
+        strategy_target_y = 0.0 + random.uniform(-0.25, 0.25)
     print('strategy_target:', strategy_target_x, strategy_target_y)
 
 
@@ -321,8 +323,8 @@ def target_xyz_callback():
         target_pose.pose.position.y = strategy_target_y
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = strategy_target_x + random.uniform(-0.15, 0.15)
-        target_pose.pose.position.y = strategy_target_y + random.uniform(-0.15, 0.15)
+        target_pose.pose.position.x = strategy_target_x # + random.uniform(-0.15, 0.15)
+        target_pose.pose.position.y = strategy_target_y # + random.uniform(-0.15, 0.15)
         frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = strategy_target_x
@@ -382,7 +384,7 @@ def game_command_callback(ext_command):
     global command_cnt, target_x, target_y, enemy_location_x, enemy_location_y, warning_cnt
     global strategy_state, yaw_scan_state, commander_x, commander_y, aim_switch
     global force_spinning, kill_sentry_first, kill_enemy_engineer, invincible_detect
-    global moving_cnt, moving_direction
+    global moving_cnt, moving_direction, force_standby_scanning
     signal_x = 0.0
     signal_y = 0.0
 
@@ -397,15 +399,14 @@ def game_command_callback(ext_command):
           ext_command.target_position_y - 0.01)
 
     if ext_command.command_keyboard == 65:
-        aim_switch = [0, 1, 0, 1, 1, 1, 0, 0, 0]
+        aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]
     if ext_command.command_keyboard == 66:
         aim_switch = [0, 0, 0, 0, 0, 0, 0, 1, 0]
     if ext_command.command_keyboard == 67:
-        aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]
-    if ext_command.command_keyboard == 68:
-        aim_switch = [0, 0, 0, 0, 0, 0, 1, 0, 0]
-    if ext_command.command_keyboard == 69:
         aim_switch = [0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+    if ext_command.command_keyboard == 88:
+        force_standby_scanning = 1
 
     if ext_command.command_keyboard == 84:
         force_spinning = True
@@ -415,11 +416,11 @@ def game_command_callback(ext_command):
         enemy_location_y = signal_y
         warning_cnt = 10.0
 
-    if 64 < ext_command.command_keyboard < 70:
-        if self_outpost_HP > 100:
-            command_cnt = 30
+    if 64 < ext_command.command_keyboard < 68:
+        if self_outpost_HP > 200:
+            command_cnt = 40
         else:
-            command_cnt = 15
+            command_cnt = 25
         commander_x = signal_x
         commander_y = signal_y
 
@@ -436,6 +437,7 @@ def game_command_callback(ext_command):
         moving_cnt = 1.8
         moving_direction = 3
 
+    strategy_callback()
     target_xyz_callback()
 
 
@@ -481,6 +483,8 @@ def force_scanning_callback(event):
         force_flag = 0
     if moving_cnt > 0.1:
         force_flag = 0
+    if force_standby_scanning == 1:
+        force_flag = 1
     force_scanning_publisher.publish(force_flag)
 
 
@@ -572,7 +576,7 @@ if __name__ == '__main__':
     timer_02 = rospy.Timer(rospy.Duration(0.0125), pitch_timer_callback)
     timer_03 = rospy.Timer(rospy.Duration(0.1), tf_get_timer_callback)
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
-    timer_05 = rospy.Timer(rospy.Duration(1.0), strategy_callback)
+    timer_05 = rospy.Timer(rospy.Duration(8.0), strategy_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
     timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
