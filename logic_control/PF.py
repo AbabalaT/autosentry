@@ -53,15 +53,16 @@ remain_time = 420
 require_add_HP = 0
 
 self_robot_HP = 1000
-self_outpost_HP = 1500
+self_outpost_HP = 0
 self_base_HP = 5000
 pre_base_HP = 5000
+pre_outpost_HP = 0
 
 enemy_robot_HP = 600
 enemy_outpost_HP = 1500
 enemy_base_HP = 5000
 
-self_color = 'red'
+self_color = 'blue'
 
 hurt_lock_pos_cnt = 0
 aim_lock_pos_cnt = 0
@@ -136,7 +137,7 @@ game_status = 0
 
 target_spinning_speed = 0  # 期望小陀螺速度
 lowest_spinning_speed = 16000
-force_spinning = False
+force_spinning = True
 
 self_aim_state = 0
 
@@ -203,51 +204,6 @@ def game_status_callback(ext_status):
     game_status = ext_status.game_progress
     remain_time = ext_status.stage_remain_time
     # print("                                               Game Status:", game_status)
-
-
-def game_HP_callback(ext_HP):
-    # pass
-    global self_robot_HP, self_base_HP, self_outpost_HP, enemy_robot_HP, enemy_base_HP, enemy_outpost_HP
-    global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt
-    if self_color == 'red':
-        self_robot_HP = ext_HP.red_7_robot_HP
-        self_base_HP = ext_HP.red_base_HP
-        self_outpost_HP = ext_HP.red_outpost_HP
-
-        enemy_robot_HP = ext_HP.blue_7_robot_HP
-        enemy_base_HP = ext_HP.blue_base_HP
-        enemy_outpost_HP = ext_HP.blue_outpost_HP
-
-        if ext_HP.blue_1_robot_HP == 0:
-            enemy_1_cnt = 10
-        if ext_HP.blue_2_robot_HP == 0:
-            enemy_2_cnt = 10
-        if ext_HP.blue_3_robot_HP == 0:
-            enemy_3_cnt = 10
-        if ext_HP.blue_4_robot_HP == 0:
-            enemy_4_cnt = 10
-        if ext_HP.blue_5_robot_HP == 0:
-            enemy_5_cnt = 10
-    else:
-        self_robot_HP = ext_HP.blue_7_robot_HP
-        self_base_HP = ext_HP.blue_base_HP
-        self_outpost_HP = ext_HP.blue_outpost_HP
-
-        enemy_robot_HP = ext_HP.red_7_robot_HP
-        enemy_base_HP = ext_HP.red_base_HP
-        enemy_outpost_HP = ext_HP.red_outpost_HP
-
-        if ext_HP.red_1_robot_HP == 0:
-            enemy_1_cnt = 10
-        if ext_HP.red_2_robot_HP == 0:
-            enemy_2_cnt = 10
-        if ext_HP.red_3_robot_HP == 0:
-            enemy_3_cnt = 10
-        if ext_HP.red_4_robot_HP == 0:
-            enemy_4_cnt = 10
-        if ext_HP.red_5_robot_HP == 0:
-            enemy_5_cnt = 10
-    # print("    HP:", robot_HP)
 
 
 def chassis_angle_callback(ext_chassis_angle):
@@ -431,16 +387,16 @@ def game_command_callback(ext_command):
     if ext_command.command_keyboard == 81:
         commander_x = 6.42
         commander_y = -5.20
-        command_cnt = 30
+        command_cnt = 40
 
     if ext_command.command_keyboard == 82:
-        commander_x = 6.81
-        commander_y = 6.85
+        commander_x = 9.92
+        commander_y = -0.20
         command_cnt = 40
+
         enemy_location_x = 8.52
         enemy_location_y = 1.11
-        warning_cnt = 40
-
+        warning_cnt = 25
 
     if enemy_outpost_HP > 5:  # turn off shooting unbeatable target
         aim_switch[6] = 0
@@ -474,6 +430,66 @@ def game_command_callback(ext_command):
 
     strategy_callback()
     target_xyz_callback()
+
+
+def game_HP_callback(ext_HP):
+    # pass
+    global self_robot_HP, self_base_HP, self_outpost_HP, enemy_robot_HP, enemy_base_HP, enemy_outpost_HP
+    global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt, pre_outpost_HP
+    global command_cnt, commander_x, commander_y
+    global force_spinning, game_status
+    if self_color == 'red':
+        self_robot_HP = ext_HP.red_7_robot_HP
+        self_base_HP = ext_HP.red_base_HP
+        self_outpost_HP = ext_HP.red_outpost_HP
+
+        enemy_robot_HP = ext_HP.blue_7_robot_HP
+        enemy_base_HP = ext_HP.blue_base_HP
+        enemy_outpost_HP = ext_HP.blue_outpost_HP
+
+        if ext_HP.blue_1_robot_HP == 0:
+            enemy_1_cnt = 10
+        if ext_HP.blue_2_robot_HP == 0:
+            enemy_2_cnt = 10
+        if ext_HP.blue_3_robot_HP == 0:
+            enemy_3_cnt = 10
+        if ext_HP.blue_4_robot_HP == 0:
+            enemy_4_cnt = 10
+        if ext_HP.blue_5_robot_HP == 0:
+            enemy_5_cnt = 10
+    else:
+        self_robot_HP = ext_HP.blue_7_robot_HP
+        self_base_HP = ext_HP.blue_base_HP
+        self_outpost_HP = ext_HP.blue_outpost_HP
+
+        enemy_robot_HP = ext_HP.red_7_robot_HP
+        enemy_base_HP = ext_HP.red_base_HP
+        enemy_outpost_HP = ext_HP.red_outpost_HP
+
+        if ext_HP.red_1_robot_HP == 0:
+            enemy_1_cnt = 10
+        if ext_HP.red_2_robot_HP == 0:
+            enemy_2_cnt = 10
+        if ext_HP.red_3_robot_HP == 0:
+            enemy_3_cnt = 10
+        if ext_HP.red_4_robot_HP == 0:
+            enemy_4_cnt = 10
+        if ext_HP.red_5_robot_HP == 0:
+            enemy_5_cnt = 10
+
+    if self_outpost_HP <= 200:
+        if pre_outpost_HP > 200:
+            commander_x = -0.7
+            commander_y = 0.0
+            command_cnt = 30
+            target_xyz_callback()
+    pre_outpost_HP = self_outpost_HP
+
+    if game_status == 4:
+        if self_robot_HP != 1000:
+            force_spinning = True
+
+    # print("    HP:", robot_HP)
 
 
 def force_moving_callback(event):
@@ -526,10 +542,14 @@ def force_scanning_callback(event):
 def spin_timer_callback(event):
     global target_spinning_speed, force_spinning, lowest_spinning_speed
     spin_speed_msg = spinning_control()
+
     if force_spinning:
         lowest_spinning_speed = 16000
-    elif self_outpost_HP > 50 and game_status == 4:
-        lowest_spinning_speed = 0
+    elif game_status == 4:
+        if self_outpost_HP > 150:
+            lowest_spinning_speed = 0
+        else:
+            lowest_spinning_speed = 16000
     else:
         lowest_spinning_speed = 16000
 
@@ -546,7 +566,7 @@ def spin_timer_callback(event):
 
 
 def game_hurt_callback(ext_hurt):
-    global target_spinning_speed, hurt_angle, armor0_angle, hurt_lock_pos_cnt
+    global target_spinning_speed, hurt_angle, armor0_angle, hurt_lock_pos_cnt, lowest_spinning_speed
     if hurt_lock_pos_cnt < 1.0:
         if ext_hurt.hurt_type == 0:
             hurt_angle = armor0_angle + ext_hurt.armor_id * 1.571
