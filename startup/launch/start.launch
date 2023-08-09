@@ -34,3 +34,19 @@
 <!--    <rosparam command="load" file="$(find windMill)/cfg/params.yaml" /> -->
 
 <!-- </launch> -->
+
+<!-- <launch> -->
+<!--    <param name="templates_path" value="$(find windMill)/templates/"/> -->
+<!--    <param name="num_model_path" value="$(find windMill)/num_model.txt"/> -->
+<!--    <param name="dbg_img_path" value="$(find windMill)/../../../../dbg_img/"/> -->
+
+<!--    <node pkg="windMill" type="windMill_node" output="screen" name="windMill" respawn="true" /> -->
+<!--     <node pkg="mv_driver" type="mv_driver_node" name="mv_driver" output="screen" respawn="true" /> -->
+<!--     <node pkg="serial_robot" type="serial_robot_node" name="serial_robot_node"  > -->
+<!--     <remap from="/write" to ="/write_pixel"/> -->
+<!--     </node> -->
+<!--     <node pkg="img_displayer" type="img_displayer_node" name="img_displayer_1" output="screen"  /> -->
+
+<!--    <rosparam command="load" file="$(find windMill)/cfg/params.yaml" /> -->
+
+<!-- </launch> -->

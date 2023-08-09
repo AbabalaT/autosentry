@@ -175,7 +175,7 @@ def armor_select_callback(event):
     armor_select_publisher.publish(aim_select_msg)
 
 
-def strategy_callback(event):
+def strategy_callback():
     global warning_cnt, strategy_target_yaw, yaw_scan_state, command_cnt
     global strategy_target_x, strategy_target_y, strategy_state
     if command_cnt > 0:
@@ -184,10 +184,10 @@ def strategy_callback(event):
     elif game_status != 4:
         strategy_target_x = -0.7
         strategy_target_y = 0.0
-    elif self_outpost_HP < 50:
-        strategy_target_x = -0.7 + random.uniform(-0.25, 0.25)
-        strategy_target_y = 0.0 + random.uniform(-0.25, 0.25)
-    print('strategy_target:', strategy_target_x, strategy_target_y)
+    else:
+        strategy_target_x = -0.7
+        strategy_target_y = 0.0
+    print('strategy_target:', 1, strategy_target_y)
 
 
 def auto_aim_callback(ext_aim):
@@ -279,9 +279,13 @@ def target_xyz_callback():
         target_pose.pose.position.y = strategy_target_y
         frame_target_yaw = current_yaw
     elif hurt_lock_pos_cnt > 0:
-        target_pose.pose.position.x = strategy_target_x  # + random.uniform(-0.15, 0.15)
-        target_pose.pose.position.y = strategy_target_y  # + random.uniform(-0.15, 0.15)
-        frame_target_yaw = hurt_angle
+        if strategy_target_x == -0.7 and strategy_target_y == 0.0:
+            target_pose.pose.position.x = strategy_target_x + random.uniform(-0.15, 0.15)
+            target_pose.pose.position.y = strategy_target_y + random.uniform(-1.2, 1.2)
+        else:
+            target_pose.pose.position.x = strategy_target_x  # + random.uniform(-0.15, 0.15)
+            target_pose.pose.position.y = strategy_target_y  # + random.uniform(-0.15, 0.15)
+            frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = strategy_target_x
         target_pose.pose.position.y = strategy_target_y
@@ -292,7 +296,7 @@ def target_xyz_callback():
                 yaw_refresh_idle = 5
         else:
             target_yaw = target_yaw + 1.0466
-            yaw_refresh_idle = 3
+            yaw_refresh_idle = 35
         if target_yaw > 3.14159:
             target_yaw = target_yaw - 6.2831852
         if target_yaw < -3.14159:
@@ -397,6 +401,21 @@ def game_command_callback(ext_command):
         enemy_location_x = 8.52
         enemy_location_y = 1.11
         warning_cnt = 25
+
+    if ext_command.command_keyboard == 83:
+        commander_x = 11.02
+        commander_y = -6.57
+        command_cnt = 180
+
+    if ext_command.command_keyboard == 86:
+        commander_x = 17.00
+        commander_y = 1.80
+        command_cnt = 180
+
+    if ext_command.command_keyboard == 85:
+        commander_x = 11.79
+        commander_y = -1.83
+        command_cnt = 180
 
     if enemy_outpost_HP > 5:  # turn off shooting unbeatable target
         aim_switch[6] = 0
@@ -570,11 +589,17 @@ def game_hurt_callback(ext_hurt):
     if hurt_lock_pos_cnt < 1.0:
         if ext_hurt.hurt_type == 0:
             hurt_angle = armor0_angle + ext_hurt.armor_id * 1.571
-            hurt_lock_pos_cnt = 1.5
+            if strategy_target_x == -0.7 and strategy_target_y == 0.0:
+                hurt_lock_pos_cnt = 3.0
+            else:
+                hurt_lock_pos_cnt = 1.5
             if lowest_spinning_speed != 0:
                 target_spinning_speed = 26000
             target_xyz_callback()
 
+
+def strategy_timer_callback(event):
+    strategy_callback()
 
 def tf_get_timer_callback(event):
     try:
@@ -631,7 +656,7 @@ if __name__ == '__main__':
     timer_02 = rospy.Timer(rospy.Duration(0.0125), pitch_timer_callback)
     timer_03 = rospy.Timer(rospy.Duration(0.1), tf_get_timer_callback)
     timer_04 = rospy.Timer(rospy.Duration(0.25), spin_timer_callback)
-    timer_05 = rospy.Timer(rospy.Duration(8.0), strategy_callback)
+    timer_05 = rospy.Timer(rospy.Duration(8.0), strategy_timer_callback)
     timer_06 = rospy.Timer(rospy.Duration(0.1), cnt_timer_callback)
     timer_07 = rospy.Timer(rospy.Duration(1), death_robot_callback)
     timer_08 = rospy.Timer(rospy.Duration(0.5), armor_select_callback)
