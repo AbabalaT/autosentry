@@ -81,6 +81,9 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
         for (long i = 0; i <= pcl2cloud->points.size(); i = i + 1) {
             float gradient = (pow(cloud_normals->points[i].normal_x, 2) + pow(cloud_normals->points[i].normal_y, 2)) / pow(cloud_normals->points[i].normal_z, 2);
             if(gradient > 1.0f){
+                if(pcl2cloud->points[i].y > 6.6 or pcl2cloud->points[i].y < -6.6){
+                    continue;
+                }
                 if(pow(pcl2cloud->points[i].x - current_x, 2) + pow(pcl2cloud->points[i].y - current_y, 2) > 0.09){
                     pcl2cloud->points[i].z = 0;
                     pcl2cloud_out->points.push_back(pcl2cloud->points[i]);
@@ -88,6 +91,27 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
                 }
             }
         }
+
+        pcl::PointXYZ point4push;
+        for (float x = -7.00; x < 22.0; x = x + 0.05) {
+            point4push.x = x;
+            point4push.y = -7.85f;
+            point4push.z = 0.2f;
+            pcl2cloud_out->points.push_back(point4push);
+            point4push.y = 7.85f;
+            pcl2cloud_out->points.push_back(point4push);
+            point_num = point_num + 2;
+        }
+        for (float y = -7.85; y < 7.85; y = y + 0.05) {
+            point4push.x = -7.00f;
+            point4push.y = y;
+            point4push.z = 0.2f;
+            pcl2cloud_out->points.push_back(point4push);
+            point4push.x = 22.0f;
+            pcl2cloud_out->points.push_back(point4push);
+            point_num = point_num + 2;
+        }
+
         pcl2cloud_out->width = point_num;
         pcl2cloud_out->height = 1;
         pcl2cloud_out->points.resize(pcl2cloud_out->width * pcl2cloud_out->height);
