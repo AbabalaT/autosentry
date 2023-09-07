@@ -137,7 +137,7 @@ game_status = 0
 '''
 
 target_spinning_speed = 0  # 期望小陀螺速度
-lowest_spinning_speed = 16000
+lowest_spinning_speed = 4000
 force_spinning = False
 
 self_aim_state = 0
@@ -301,8 +301,8 @@ def target_xyz_callback():
                 frame_target_yaw = hurt_angle
                 random_move_idle = 0.4
         else:
-            target_pose.pose.position.x = strategy_target_x
-            target_pose.pose.position.y = strategy_target_y
+            target_pose.pose.position.x = strategy_target_x + random.uniform(-0.25, 0.25)
+            target_pose.pose.position.y = strategy_target_y + random.uniform(-0.25, 0.25)
             frame_target_yaw = hurt_angle
     else:
         target_pose.pose.position.x = strategy_target_x
@@ -521,9 +521,9 @@ def game_HP_callback(ext_HP):
     if game_status == 4:
         if self_outpost_HP <= 200:
             if pre_outpost_HP > 200:
-                commander_x = -0.7
-                commander_y = 0.0
-                command_cnt = 30
+                commander_x = -0.627
+                commander_y = 4.309
+                command_cnt = 300
                 strategy_callback()
         pre_outpost_HP = self_outpost_HP
 
@@ -582,14 +582,14 @@ def spin_timer_callback(event):
     spin_speed_msg = spinning_control()
 
     if force_spinning:
-        lowest_spinning_speed = 16000
+        lowest_spinning_speed = 23500
     elif game_status == 4:
-        if self_outpost_HP > 150:
+        if self_outpost_HP > 100:
             lowest_spinning_speed = 0
         else:
-            lowest_spinning_speed = 16000
+            lowest_spinning_speed = 23500
     else:
-        lowest_spinning_speed = 16000
+        lowest_spinning_speed = 4000
 
     if target_spinning_speed > lowest_spinning_speed:
         target_spinning_speed = target_spinning_speed - 2000
