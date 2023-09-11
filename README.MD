@@ -1,6 +1,17 @@
-# Heading level 1
+# 机甲大师2023赛季南京航空航天大学 哨兵算法部分
 ## 软件功能介绍
-   
+   autosentry包含除了雷达驱动、LIO里程计、自瞄系统之外的哨兵算法
+1. key_rc_test:调试时按键控制哨兵移动功能包
+2. localize:定位功能包
+   1. localize_startup：静态坐标系转换及启动调用
+   2. slam/spectacularAI: 运行在OAK相机上的VIO功能包
+3. logic_contrl: 逻辑控制节点，各类任务控制，决策类型选择
+4. navigation: 导航部分
+   1. depth2scan: 视觉深度图转2D激光雷达数据，项目开始时用于避障
+   2. move_controller: TEB导航系统
+   3. pcl2process: 用于避障的点云地面分割
+   4. 
+
 ## 部署
 1. 安装下述依赖项
 2. 编辑`localize/slam/spectacular_ai/main.launch`  
