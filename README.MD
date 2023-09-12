@@ -17,12 +17,22 @@
 8. startup: 启动控制
 
 ## 部署
-1. 安装下述依赖项
-2. 编辑`localize/slam/spectacular_ai/main.launch`  
+1. 若使用LIO,确认LIO已经可以正常运行（我们使用fastlio2/fastlio_sam， 初次运行可以根据报错微调坐标系名字，需要打开lio中将点云发布到世界系）
+   有条件可以调试ekf
+   也可以选择最信任的里程计输出发布到base_link坐标系，系统自动完成投影到平面
+2. 安装下述依赖项（其实不用oak可以不装depthai等驱动，可以删除项目oak相关文件后再编译）
+3. 编辑`localize/slam/spectacular_ai/main.launch`  
    该文件中目前只启用了一个vio模块，后续可以多模块同时启动  
    1. 首先确保只启用了一个vio模块，其他模块需要注释，然后将参数`mxId`留空，只连接一个oak启动程序
    2. 启动后程序会输出当前oak的mxId，需要复制到对应的模块参数中
-3. 部署完成，通过`startup/launch/start.launch`启动程序
+4. 根据自己车辆设置以下topic输入:（根据自己队伍的自瞄和上下位机通信修改）
+   1. /robot/auto_aim      : 自瞄topic （我们的自瞄输出包含俯仰、航向角度、角速度、目标编号、建议射频等数据）
+   2. /robot/chassis_angle : 底盘yaw轴电机绝对位置编码器信号topic（用于装甲板受击感知）
+5. 确保自己的车辆已经可以执行如下参数：
+   1. /robot/logic_recommend_angle： 自瞄未瞄准时云台建议俯仰角
+   2. /robot/spinning_speed： 小陀螺速度 （范围 0-32768，根据自己的车辆情况缩放执行）
+   3. /cmd_cel: 模拟操作手的前后左右移动和航向转速（不考虑底盘与云台解耦，就当步兵用）
+6. 部署完成，通过`startup/launch/start.launch`启动程序
 
 ## 依赖项
 1. depthAI-core https://gitee.com/oakchina/depthai-core/releases/
