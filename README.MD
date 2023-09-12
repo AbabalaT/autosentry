@@ -10,7 +10,11 @@
    1. depth2scan: 视觉深度图转2D激光雷达数据，项目开始时用于避障
    2. move_controller: TEB导航系统
    3. pcl2process: 用于避障的点云地面分割
-   4. 
+   4. project2plane: 负责将EKF输出的3维位姿投影到2维上，同时将2D激光数据去除俯仰和横滚带来的偏差
+5. oak/oak_imu:测试启用OAK而不用IMU的功能（为后续升级做准备）
+6. robot/robot_model: urdf坐标
+7. serial/referee: 裁判系统信号解析
+8. startup: 启动控制
 
 ## 部署
 1. 安装下述依赖项
