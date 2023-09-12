@@ -14,7 +14,7 @@
 5. oak/oak_imu:测试启用OAK而不用IMU的功能（为后续升级做准备）
 6. robot/robot_model: urdf坐标
 7. serial/referee: 裁判系统信号解析
-8. startup: 启动控制
+8. startup: 程序启动
 
 ## 部署
 1. 若使用LIO,确认LIO已经可以正常运行（我们使用fastlio2/fastlio_sam， 初次运行可以根据报错微调坐标系名字，需要打开lio中将点云发布到世界系）
@@ -38,7 +38,9 @@
 
 ## 运行环境与编译：
    我们的系统为ubuntu20.04
-   livox_ros_driver2、fastlio、auto_sentry分别在三个工作空间中，分别编译
+   livox_ros_driver2、fastlio、auto_sentry分别在三个工作空间中，分别编译  
+   auto_sentry使用catkin编译，方式为catkin_make  
+   
 
 ## 依赖项
 1. depthAI-core https://gitee.com/oakchina/depthai-core/releases/
