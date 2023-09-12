@@ -18,8 +18,8 @@
 
 ## 部署
 1. 若使用LIO,确认LIO已经可以正常运行（我们使用fastlio2/fastlio_sam， 初次运行可以根据报错微调坐标系名字，需要打开lio中将点云发布到世界系）
-   有条件可以调试ekf
-   也可以选择最信任的里程计输出发布到base_link坐标系，系统自动完成投影到平面
+   有条件可以调试ekf  
+   也可以选择最信任的里程计输出发布到base_link坐标系，系统自动完成投影到平面  
 2. 安装下述依赖项（其实不用oak可以不装depthai等驱动，可以删除项目oak相关文件后再编译）
 3. 编辑`localize/slam/spectacular_ai/main.launch`  
    该文件中目前只启用了一个vio模块，后续可以多模块同时启动  
@@ -35,6 +35,10 @@
    4. /robot/armor_select： 装甲板白名单 0啥也不是， 1-5对应装甲板编号， 6前哨站、7哨兵、8基地，输出为0 不瞄准
    5. /cmd_force_scanning： 真值表示不用跟着导航走了直接原地转就行了
 6. 部署完成，通过`startup/launch/start.launch`启动程序
+
+## 运行环境与编译：
+   我们的系统为ubuntu20.04
+   livox_ros_driver2、fastlio、auto_sentry分别在三个工作空间中，分别编译
 
 ## 依赖项
 1. depthAI-core https://gitee.com/oakchina/depthai-core/releases/
