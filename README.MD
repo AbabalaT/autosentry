@@ -18,7 +18,8 @@
 5. oak/oak_imu:测试启用OAK而不用IMU的功能（为后续升级做准备）
 6. robot/robot_model: urdf坐标
 7. serial/referee: 裁判系统信号解析
-8. startup: 程序启动
+8. startup: 程序启动  
+robot_serial : 上下位机通信消息示例
 
 ## 部署
 1. 若使用LIO,确认LIO已经可以正常运行（我们使用fastlio2/fastlio_sam， 初次运行可以根据报错微调坐标系名字，需要打开lio中将点云发布到世界系）
