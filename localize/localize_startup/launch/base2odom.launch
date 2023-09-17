@@ -44,7 +44,7 @@
 <!--         </rosparam> -->
 
         <param name="odom3" value="/Odometry" />
-                <param name="odom3_differential" value="false"/>
+                <param name="odom3_differential" value="true"/>
                 <rosparam param="odom3_config">
                     [true, true, true,
                     true, true, true,
