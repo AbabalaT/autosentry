@@ -71,5 +71,9 @@
 <!--             false, false, false, -->
 <!--             false, false, false] -->
 <!--         </rosparam> -->
+            <rosparam param="control_config">[true,  false, false,
+                                            false, false, true]</rosparam>
+            <rosparam param="acceleration_limits">[5, 5, 10,
+                                       1.0, 1.0, 3.2]</rosparam>
     </node>
 </launch>
