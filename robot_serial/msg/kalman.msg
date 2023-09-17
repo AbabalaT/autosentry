@@ -1,0 +1,11 @@
+Header header
+float32 raw_x
+float32 kalman_x
+float32 raw_y
+float32 kalman_y
+float32 raw_z
+float32 kalman_z
+float32 v_x
+float32 v_y
+float32 v_z
+float32 sigma
