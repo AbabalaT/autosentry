@@ -368,7 +368,7 @@ def game_command_callback(ext_command): #云台手命令回调
     signal_x = 0.0
     signal_y = 0.0
 
-    if self_color == 'blue':
+    if self_color == 'blue':    #红蓝方云台手按键位置转换到哨兵地图系坐标位置
         signal_x = (20.50 - ext_command.target_position_x) * 1.07
         signal_y = (8.12 - ext_command.target_position_y) * 1.07
     else:
@@ -446,7 +446,7 @@ def game_command_callback(ext_command): #云台手命令回调
     if ext_command.command_keyboard == 88:
         force_standby_scanning = 1
 
-    if ext_command.command_keyboard == 84:
+    if ext_command.command_keyboard == 84:  #点击左半面打开强制原地旋转扫描，右半屏幕关闭
         if ext_command.target_position_x > 14.0:
             force_spinning = True
         else:
@@ -530,7 +530,7 @@ def game_HP_callback(ext_HP):   #裁判系统血量信号回调
     print("self outpost HP:", self_outpost_HP)
 
 
-def force_moving_callback(event):   #强制挪车：玩意导航卡住，按键挪一下
+def force_moving_callback(event):   #强制挪车：万一导航卡住，按键挪一下
     global moving_cnt, moving_direction
     if moving_cnt >= 0:
         moving_cnt = moving_cnt - 0.04
