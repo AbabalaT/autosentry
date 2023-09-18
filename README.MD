@@ -5,6 +5,9 @@
    裁判系统： C板转发裁判系统数据到USB-CDC，通过MicroUSB口与NUC的USB连接  
    上下位机： USB串口连接C板4pin串口
 
+![软件架构图](https://github.com/AbabalaT/autosentry/blob/new_sentry/%E7%A8%8B%E5%BA%8F%E6%A1%86%E5%9B%BE.jpg)
+![硬件及信息流](https://github.com/AbabalaT/autosentry/blob/new_sentry/%E7%A1%AC%E4%BB%B6%E6%A1%86%E5%9B%BE.jpg)
+
 ## 软件功能介绍
    autosentry包含除了雷达驱动、LIO里程计、自瞄系统、上下位机通信包之外的哨兵算法
 1. key_rc_test:调试时按键控制哨兵移动功能包
