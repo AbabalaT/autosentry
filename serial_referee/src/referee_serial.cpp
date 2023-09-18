@@ -65,6 +65,7 @@ namespace Referee {
         status_msg.SyncTimeStamp = ext_status.SyncTimeStamp,
         game_status_publisher.publish(status_msg);
     }
+    
     void get_HP(uint8_t* msg){
         ext_game_robot_HP_t ext_HP = *(ext_game_robot_HP_t*)msg;
         serial_referee::message_game_HP HP_msg;
