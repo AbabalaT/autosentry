@@ -105,7 +105,7 @@ namespace Referee {
     }
 }
 
-bool scan() {
+bool scan() {//循环扫描函数
     int eraseSize = 0;
     if ((int)uart_buff.size() < sizeof(Head) + sizeof(Tail) +1) {
         return false;

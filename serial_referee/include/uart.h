@@ -10,7 +10,7 @@
 #include <termios.h>
 #include "check.h"
 #include <iostream>
-auto uart_start(const char* uart_name){
+auto uart_start(const char* uart_name){//启动串口
     auto uart_com = open(uart_name, O_RDWR);
     struct termios Opt;
     tcgetattr(uart_com, &Opt);
@@ -34,7 +34,7 @@ struct __attribute__((packed)) Tail{
     uint16_t CRC16;
 };
 
-bool checker_head(Head head){
+bool checker_head(Head head){//头校验
     //std::cout<<(int)head.SOF<<(int)head.length<<(int)head.seq<<(int)head.CRC8<<(int)head.cmd_id<<std::endl;
     if(head.SOF != 0xA5){
         return true;
@@ -46,7 +46,7 @@ bool checker_head(Head head){
     return true;
 }
 
-bool checker_all(Head head, Tail tail, uint8_t* p){
+bool checker_all(Head head, Tail tail, uint8_t* p){//全帧长度校验
     uint16_t crc16_check = ms::crc16check(p, head.length+7);
     if(crc16_check == tail.CRC16){
         return false;

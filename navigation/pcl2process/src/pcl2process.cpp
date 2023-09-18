@@ -43,7 +43,7 @@ struct PointInt {
 
 float current_x = 0.0, current_y = 0.0;
 
-void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
+void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {//法向量法投影转平面
     pcl::PointCloud<pcl::PointXYZ>::Ptr pcl2cloud(new pcl::PointCloud<pcl::PointXYZ>);
     sensor_msgs::PointCloud2 ROSPCL_output;
     pcl::fromROSMsg(*laserCloudMsg, *pcl2cloud);
@@ -121,7 +121,7 @@ void getcloud_vec(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     }
 }
 
-void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
+void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {//使用体素+梯度法进行点云分割
     std::vector<std::vector<int>> point_list1(2800);
     std::vector<PointInt> point_list2;
     geometry_msgs::TransformStamped base2map;
@@ -145,7 +145,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     cv::Mat gradient_map(2801, 2801, CV_8UC1, cv::Scalar(0));
     for (auto point: (pcl2cloud->points)) {
         point.z = point.z + 0.52;
-        if (point.x < 22.4) {
+        if (point.x < 22.4) {   //判断该点是否属于车身
             if (point.x > -5.4) {
                 if (point.y < 13.8) {
                     if (point.y > -13.8) {
@@ -207,7 +207,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
             }
         }
         int surround_point_x = 0;
-        for (surround_point_x = ((point.p_x - 10) > 0 ? (point.p_x - 10) : 0);
+        for (surround_point_x = ((point.p_x - 10) > 0 ? (point.p_x - 10) : 0);//在附近20*20cm范围内搜索高度差异最大的点
              surround_point_x < ((point.p_x + 10) < 2799 ? (point.p_x + 10) : 2799);
              surround_point_x = surround_point_x + 1) {
             for (auto surround_point_y: point_list1[surround_point_x]) {
@@ -291,7 +291,7 @@ void getcloud(const sensor_msgs::PointCloud2ConstPtr &laserCloudMsg) {
     cv::threshold(gradient_map, gradient_map, 10, 255, cv::THRESH_BINARY);
     pcl::VoxelGrid<pcl::PointXYZ> filter;
     filter.setInputCloud(pcl2cloud_out);
-    filter.setLeafSize(0.03f, 0.03f, 0.01f);
+    filter.setLeafSize(0.03f, 0.03f, 0.01f);//体素下采样
     filter.filter(*pcl2cloud_out);
 
     pcl::toROSMsg(*pcl2cloud_out, ROSPCL_output);

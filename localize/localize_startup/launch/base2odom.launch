@@ -1,7 +1,7 @@
 <launch>
-
-<!--     <include file="$(find spectacular_ai)/launch/main.launch" /> -->
 <!-- 启动OAK定位 -->
+<!-- <include file="$(find spectacular_ai)/launch/main.launch" /> -->
+<!-- 启动EKF定位 -->
     <node pkg="robot_localization" type="ekf_localization_node"
           name="robot_localization_ekf_node_odom"
           clear_params="true">

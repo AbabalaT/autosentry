@@ -1,5 +1,5 @@
 //
-// Created by bismarck on 12/8/22.
+// CRC校验
 //
 
 #ifndef MSG_SERIALIZE_CHECK_H

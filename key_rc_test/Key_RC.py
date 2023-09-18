@@ -12,7 +12,7 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import String
 
 
-def teleop_key():
+def tele_key():
     thread_stop = False
     cmd = Twist()
     # roslib.load_manifest('smartcar_teleop')
@@ -65,4 +65,4 @@ def teleop_key():
         time.sleep(0.05)
 
 if __name__ == '__main__':
-    teleop_key()
+    tele_key()

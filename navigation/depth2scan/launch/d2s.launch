@@ -1,3 +1,4 @@
+<!--OAK相机，视觉深度图转线性激光避障-->
 <launch>
     <arg name="tf_prefix" default="oak_front"/>
     <node name="$(arg tf_prefix)_d2s" pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" args="">

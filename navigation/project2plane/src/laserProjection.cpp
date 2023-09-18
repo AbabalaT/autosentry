@@ -26,7 +26,7 @@ bool publish_tf = false;
 bool callbacked_flag = false;
 tf2_ros::Buffer tfBuffer;
 
-void project2plane_callback(const ros::TimerEvent&){
+void project2plane_callback(const ros::TimerEvent&){    //将3D位置投影到2D地图上用于导航
     static tf2_ros::TransformBroadcaster br;
     geometry_msgs::TransformStamped laser2base, base2map;
     try {
@@ -57,7 +57,7 @@ void project2plane_callback(const ros::TimerEvent&){
     }
 }
 
-void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {
+void laserCallback(const sensor_msgs::LaserScan::ConstPtr &msg) {   //根据当前姿态对线性激光结果进行转换
     sensor_msgs::LaserScan new_msg = *msg;
     static tf2_ros::TransformBroadcaster br;
     geometry_msgs::TransformStamped laser2base, base2map;
