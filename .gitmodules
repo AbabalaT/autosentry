@@ -1,3 +1,0 @@
-[submodule "robot_serial"]
-	path = robot/robot_serial
-	url = git@github.com:nuaa-rm/robot_serial.git
