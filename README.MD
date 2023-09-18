@@ -49,6 +49,7 @@ robot_serial : 上下位机通信消息示例
 
 ## 运行与测试：
    策略选择：在logic_control的launch中选择启动哪个P_.py来选择策略，前几个用于联盟赛、后几个用于超级对抗赛  
+   **注释最详细的是F策略！**
    红蓝方设置：在该logic中设置 `self_color`, 值必须为`'blue'`或`'red'`  
    在startup中取消logic_control节点的启动即可防止持续发布导航目标，可以用于TEB导航的调试  
    可以先rosrun`key_rc_control`节点，用`W、S、A、D、Q、E`键标定平移、旋转速度，WSAD按一次为0.5米/秒  

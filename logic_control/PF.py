@@ -29,46 +29,46 @@ from serial_referee.msg import message_game_hurt
 
 todo = 0
 
-allow_out_cnt = 10.0
+allow_out_cnt = 10.0    #回家倒计时，在该计时为0且前哨站已死亡时，目标点应该只出现在巡逻区内
 
-kill_enemy_engineer = False
-invincible_detect = True
-kill_sentry_first = True
+kill_enemy_engineer = False # 是否打对方工程
+invincible_detect = True    # 是否启用防无敌检测
+kill_sentry_first = True    # 基地护甲以打开是否依然先打死哨兵
 
-aim_distance = 0
+aim_distance = 0    #自瞄获得目标距离
 
-warning_cnt = 0
+warning_cnt = 0 #指向性警戒结束倒计时，不为0时云台指向境界点
 
-pitch_scan_low = -20.0
-pitch_scan_up = 10.0
+pitch_scan_low = -20.0  #云台扫描下值
+pitch_scan_up = 10.0    #云台扫描上值
 
-yaw_scan_low = 0.0
+yaw_scan_low = 0.0  
 yaw_scan_up = 0.0
 yaw_scan_state = 0  # 0：周扫描 1：扇正扫 2：扇反扫
 
-target_publish_idle = 0
-yaw_refresh_idle = 0
+target_publish_idle = 0 #不为0时此次不发送导航目标点，降低导航规划次数
+yaw_refresh_idle = 0 #不更新导航目标航向
 
-remain_time = 420
-require_add_HP = 0
+remain_time = 420   #距离比赛结束时间
+require_add_HP = 0  #是否需要回补血区补血（省赛）
 
-self_robot_HP = 1000
-self_outpost_HP = 1500
+self_robot_HP = 1000    #自己的血量
+self_outpost_HP = 1500  #大部分变量名是人话
 self_base_HP = 5000
 
-pre_base_HP = 5000
-pre_outpost_HP = 1500
+pre_base_HP = 5000  #上一时刻收到基地血量
+pre_outpost_HP = 1500   #上一时刻收到前哨站血量
 
-enemy_robot_HP = 600
+enemy_robot_HP = 600    #敌方哨兵血量
 enemy_outpost_HP = 1500
 enemy_base_HP = 5000
 
-self_color = 'blue'
+self_color = 'blue' #己方的颜色           ！！！一定要设置对！！！
 
-hurt_lock_pos_cnt = 0
-aim_lock_pos_cnt = 0
+hurt_lock_pos_cnt = 0   #收到攻击转向目标持续时间
+aim_lock_pos_cnt = 0    #瞄准目标后在此航向停留时间
 
-enemy_1_cnt = 0
+enemy_1_cnt = 0 #对方1号几秒内死过（10秒内死过，当前复活时为无敌状态，不攻击）
 enemy_2_cnt = 0
 enemy_3_cnt = 0
 enemy_4_cnt = 0
@@ -77,26 +77,26 @@ enemy_5_cnt = 0
 moving_cnt = -1
 moving_direction = 0
 
-strategy_state = 0  # 0： 防御模式 1： 攻击模式 2： 视觉拖曳
+strategy_state = 0  #   0： 防御模式 1： 攻击模式 2： 视觉拖曳
 
-command_cnt = 0.0
+command_cnt = 0.0   #   云台手命令持续周期
 
 hurt_armor = 0  # 受击装甲
-chassis_angle = 0.0  # 底盘角度
-armor0_angle = 0.0
-hurt_angle = 0.0
+chassis_angle = 0.0 # 底盘角度
+armor0_angle = 0.0  # 0号装甲对世界系的角度，用于装甲感知
+hurt_angle = 0.0    # 受击装甲板在世界系角度
 
-commander_x = 0.0
+commander_x = 0.0   #云台手点击位置
 commander_y = 0.0
 
-strategy_target_x = 0.0
+strategy_target_x = 0.0 #战略层目标位置
 strategy_target_y = 0.0
 strategy_target_yaw = 0.0
 
-enemy_location_x = 11.1
+enemy_location_x = 11.1 #云台手警戒点/敌方位置（全向感知可以接入进来）
 enemy_location_y = 4.81
 
-target_x = 0.0
+target_x = 0.0  #战术层目标位置
 target_y = 0.0
 target_yaw = 0.0
 
@@ -104,13 +104,13 @@ pre_target_x = 0.0
 pre_target_y = 0.0
 pre_target_yaw = 0.0
 
-force_standby_scanning = 0
+force_standby_scanning = 0  #强制原地旋转扫描（哨兵疯了按一下原地转）
 
-current_x = 0.0
+current_x = 0.0 #当前位置
 current_y = 0.0
 current_yaw = 0.0
 
-aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]
+aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]    #自瞄白名单
 
 '''
 0:待机、 1：攻击、 2：防御
@@ -126,7 +126,7 @@ aim_switch = [0, 1, 1, 1, 1, 1, 0, 0, 0]
 pitch_scan = 0.0
 pitch_state = 0  # 0:上升 1: 下降
 
-game_status = 0
+game_status = 0 #比赛阶段状态
 
 '''
 订阅自瞄
@@ -150,7 +150,7 @@ def at_patrol_check(x, y):
     return 0
 
 
-def allow_out_timer_callback(event):
+def allow_out_timer_callback(event):    #允许出家计时-定时器回调
     global allow_out_cnt, self_outpost_HP
     if self_outpost_HP > 750:
         allow_out_cnt = 300.0
@@ -162,7 +162,7 @@ def allow_out_timer_callback(event):
         allow_out_cnt = allow_out_cnt - 0.1
 
 
-def armor_select_callback(event):
+def armor_select_callback(event):   #白名单控制-定时器触发
     global armor_select_publisher, aim_switch
     aim_select_msg = armor_select()
     aim_select_msg.aim_1 = aim_switch[1]
@@ -176,7 +176,7 @@ def armor_select_callback(event):
     armor_select_publisher.publish(aim_select_msg)
 
 
-def strategy_callback():
+def strategy_callback():    #战略层位置决策
     global warning_cnt, strategy_target_yaw, yaw_scan_state, command_cnt
     global strategy_target_x, strategy_target_y, strategy_state
     if command_cnt > 0:
@@ -192,7 +192,7 @@ def strategy_callback():
     print('strategy_target:', strategy_target_x, strategy_target_y)
 
 
-def auto_aim_callback(ext_aim):
+def auto_aim_callback(ext_aim): #自瞄回调
     global aim_lock_pos_cnt, aim_distance
     armor_number = ext_aim.target_number
     if armor_number > 8:
@@ -201,16 +201,16 @@ def auto_aim_callback(ext_aim):
         aim_lock_pos_cnt = 0.8
 
 
-def game_status_callback(ext_status):
+def game_status_callback(ext_status):   #比赛阶段和结束时间信息回调
     global game_status, remain_time
     game_status = ext_status.game_progress
     remain_time = ext_status.stage_remain_time
     # print("                                               Game Status:", game_status)
 
 
-def chassis_angle_callback(ext_chassis_angle):
+def chassis_angle_callback(ext_chassis_angle):  #底盘0号装甲解算
     global chassis_angle, armor0_angle
-    rad_angle = (ext_chassis_angle.data - 4804.00) / 8192.00 * 6.2831852
+    rad_angle = (ext_chassis_angle.data - 4804.00) / 8192.00 * 6.2831852    #4804.0是我们云台对0号装甲的绝对位置编码器数值
     if rad_angle < 0:
         rad_angle = rad_angle + 6.2831852
     chassis_angle = rad_angle
@@ -224,7 +224,7 @@ def chassis_angle_callback(ext_chassis_angle):
     # print('         armor0 yaw:', armor0_angle)
 
 
-def cnt_timer_callback(event):
+def cnt_timer_callback(event):  #几个不太重要的定时器一起计算
     global hurt_lock_pos_cnt, aim_lock_pos_cnt, command_cnt, warning_cnt
     if hurt_lock_pos_cnt > 0:
         hurt_lock_pos_cnt = hurt_lock_pos_cnt - 0.1
@@ -239,7 +239,7 @@ def cnt_timer_callback(event):
         warning_cnt = warning_cnt - 0.1
 
 
-def death_robot_callback(event):
+def death_robot_callback(event):#   已死亡机器人计时，死亡为10，活了之后过1秒减1秒，减到0时无敌解除
     global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt
     if enemy_1_cnt > 0:
         enemy_1_cnt = enemy_1_cnt - 1
@@ -270,7 +270,7 @@ def death_robot_callback(event):
 random_move_idle = 0.0
 
 
-def target_xyz_callback():
+def target_xyz_callback():  #战术目标点选择
     global self_base_HP, pre_base_HP, wait_attack_cnt, aim_lock_pos_cnt
     global target_yaw, current_yaw, target_x, target_y, hurt_lock_pos_cnt
     global pre_target_x, pre_target_y, pre_target_yaw, yaw_scan_state, target_publish_idle, yaw_refresh_idle, random_move_idle
