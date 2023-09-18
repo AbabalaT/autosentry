@@ -77,9 +77,11 @@ robot_serial : 上下位机通信消息示例
 4. ros-\<version\>-robot-localization
 5. ros-\<version\>-move-base
 6. ros-\<version\>-map-server
-7. ros-\<version\>-depthimage-to-laserscan
-8. cmake时会自动下载spectacularAI的依赖，如果下载过慢，可以手工下载下面的包，并放置于`localize/slam/spectacular_ai/thirdparty`下  
+7. ros-\<version\>-depthimage-to-laserscan  
+   cmake时会自动下载spectacularAI的依赖，如果下载过慢，可以手工下载下面的包，并放置于`localize/slam/spectacular_ai/thirdparty`下  
    https://github.com/SpectacularAI/sdk/releases/download/v1.10.0/spectacularAI_depthaiPlugin_cpp_non-commercial_1.10.0.tar.gz  
+8. OpenCV
+9. PCL
 
 ## 坐标系定义
 使用标准ROS坐标系 https://www.ros.org/reps/rep-0103.html
