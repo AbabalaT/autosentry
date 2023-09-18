@@ -9,11 +9,11 @@
    裁判系统： C板转发裁判系统数据到USB-CDC，通过MicroUSB口与NUC的USB连接  
    上下位机： USB串口连接C板4pin串口
 ## 效果展示
-###高速导航
+### 高速导航
 ![高速运动](https://github.com/AbabalaT/autosentry/blob/new_sentry/gifs/%E9%AB%98%E9%80%9F%E8%BF%90%E5%8A%A8.gif)
-###近战
+### 近战
 ![近战](https://github.com/AbabalaT/autosentry/blob/new_sentry/gifs/%E8%BF%91%E6%88%98.gif)
-###开局反工程
+### 开局反工程
 ![开局反工程](https://github.com/AbabalaT/autosentry/blob/new_sentry/gifs/%E5%BC%80%E5%B1%80%E5%8F%8D%E5%B7%A5%E7%A8%8B.gif)
 ## 软件功能介绍
    autosentry包含除了雷达驱动、LIO里程计、自瞄系统、上下位机通信包之外的哨兵算法
