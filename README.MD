@@ -52,13 +52,15 @@ robot_serial : 上下位机通信消息示例
    红蓝方设置：在该logic中设置 `self_color`, 值必须为`'blue'`或`'red'`  
    在startup中取消logic_control节点的启动即可防止持续发布导航目标，可以用于TEB导航的调试  
    可以先rosrun`key_rc_control`节点，用`W、S、A、D、Q、E`键标定平移、旋转速度，WSAD按一次为0.5米/秒  
-   **由于默认启动位置为启动区前缘，启动后会后退0.7米，注意人员原理！**
+   **由于默认启动位置为启动区前缘，启动后会后退0.7米，注意人员远离！**
+
 ## 云台手按键：
    A:到点攻击机器人  
    B:到点攻击前哨站  
    C:到点攻击基地  
    D:一键到基地右侧高地  
    F:一键到基地左侧高地  
+   ......: 看wiki或代码吧......
 
 ## 依赖项
 1. depthAI-core https://gitee.com/oakchina/depthai-core/releases/
