@@ -23,9 +23,10 @@ robot_serial : 上下位机通信消息示例
 
 ## 部署
 1. 若使用LIO,确认LIO已经可以正常运行（我们使用fastlio2/fastlio_sam， 初次运行可以根据报错微调坐标系名字，需要打开lio中将点云发布到世界系）
-   有条件可以调试ekf  
+   有条件可以调试ekf，参考`http://docs.ros.org/en/noetic/api/robot_localization/html/index.html`
    也可以选择最信任的里程计输出发布到base_link坐标系，系统自动完成投影到平面  
-2. 安装下述依赖项（其实不用oak可以不装depthai等驱动，可以删除项目oak相关文件后再编译）
+2. 安装下述依赖项（其实不用oak可以不装depthai等驱动，可以删除项目oak相关文件后再编译）  
+   迁出到new_sentry分支
 3. 编辑`localize/slam/spectacular_ai/main.launch`  
    该文件中目前只启用了一个vio模块，后续可以多模块同时启动  
    1. 首先确保只启用了一个vio模块，其他模块需要注释，然后将参数`mxId`留空，只连接一个oak启动程序
