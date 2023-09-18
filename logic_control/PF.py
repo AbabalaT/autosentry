@@ -360,7 +360,7 @@ def target_xyz_timer_callback(event):
     target_xyz_callback()
 
 
-def game_command_callback(ext_command):
+def game_command_callback(ext_command): #云台手命令回调
     global command_cnt, target_x, target_y, enemy_location_x, enemy_location_y, warning_cnt
     global strategy_state, yaw_scan_state, commander_x, commander_y, aim_switch
     global force_spinning, kill_sentry_first, kill_enemy_engineer, invincible_detect
@@ -393,7 +393,7 @@ def game_command_callback(ext_command):
     if ext_command.command_keyboard == 67:
         aim_switch = [0, 0, 0, 0, 0, 0, 0, 0, 1]
 
-    if ext_command.command_keyboard == 69:
+    if ext_command.command_keyboard == 69:  #以下几个点都是哨兵常用位置，一键前往较为便捷
         commander_x = -0.685
         commander_y = -3.977
         command_cnt = 100
@@ -473,7 +473,7 @@ def game_command_callback(ext_command):
     strategy_callback()
 
 
-def game_HP_callback(ext_HP):
+def game_HP_callback(ext_HP):   #裁判系统血量信号回调
     # pass
     global self_robot_HP, self_base_HP, self_outpost_HP, enemy_robot_HP, enemy_base_HP, enemy_outpost_HP
     global enemy_1_cnt, enemy_2_cnt, enemy_3_cnt, enemy_4_cnt, enemy_5_cnt, pre_outpost_HP
@@ -530,7 +530,7 @@ def game_HP_callback(ext_HP):
     print("self outpost HP:", self_outpost_HP)
 
 
-def force_moving_callback(event):
+def force_moving_callback(event):   #强制挪车：玩意导航卡住，按键挪一下
     global moving_cnt, moving_direction
     if moving_cnt >= 0:
         moving_cnt = moving_cnt - 0.04
@@ -559,7 +559,7 @@ def force_moving_callback(event):
         force_moving_publisher.publish(force_speed)
 
 
-def force_scanning_callback(event):
+def force_scanning_callback(event): #原地匀速旋转扫描
     force_flag = 0
     distance: float = math.sqrt(pow(pre_target_x - current_x, 2) + pow(pre_target_x - current_x, 2))
     if distance < 0.2:
@@ -577,7 +577,7 @@ def force_scanning_callback(event):
     force_scanning_publisher.publish(force_flag)
 
 
-def spin_timer_callback(event):
+def spin_timer_callback(event): #小陀螺速度决策-定时器触发
     global target_spinning_speed, force_spinning, lowest_spinning_speed
     spin_speed_msg = spinning_control()
 
@@ -603,7 +603,7 @@ def spin_timer_callback(event):
     print(strategy_target_x, strategy_target_y, 'lowest spinning:', lowest_spinning_speed, force_spinning)
 
 
-def game_hurt_callback(ext_hurt):
+def game_hurt_callback(ext_hurt):   #裁判系统伤害信号
     global target_spinning_speed, hurt_angle, armor0_angle, hurt_lock_pos_cnt, lowest_spinning_speed
     if hurt_lock_pos_cnt < 1.0:
         if ext_hurt.hurt_type == 0:
@@ -621,7 +621,7 @@ def strategy_timer_callback(event):
     strategy_callback()
 
 
-def tf_get_timer_callback(event):
+def tf_get_timer_callback(event):   #位置获取
     try:
         global trans, rot, current_x, current_y, current_yaw
         trans, rot = location_listener.lookupTransform('/map', '/plane_base_link', rospy.Time(0))
@@ -632,7 +632,7 @@ def tf_get_timer_callback(event):
         print("logic_node no TF get !")
 
 
-def pitch_timer_callback(event):
+def pitch_timer_callback(event):    #俯仰值决策-定时器触发
     global pitch_state, pitch_scan, pitch_scan_low, pitch_scan_up, aim_switch
     if aim_switch[7] > 0:
         pitch_scan_up = 25.0
