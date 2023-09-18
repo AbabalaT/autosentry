@@ -61,5 +61,5 @@ robot_serial : 上下位机通信消息示例
 ## 坐标系定义
 使用标准ROS坐标系 https://www.ros.org/reps/rep-0103.html
 
-##未来方向
+## 未来方向
 所有问题与未来计划均可在仓库issue中看到
