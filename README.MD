@@ -39,14 +39,13 @@ robot_serial : 上下位机通信消息示例
    2. /robot/spinning_speed： 小陀螺速度 （范围 0-32768，根据自己的车辆情况缩放执行）
    3. /cmd_cel: 模拟操作手的前后左右移动和航向转速（不考虑底盘与云台解耦，就当步兵用）（逻辑节点有时会直接控制运动，越过导航）
    4. /robot/armor_select： 装甲板白名单 0啥也不是， 1-5对应装甲板编号， 6前哨站、7哨兵、8基地，输出为0 不瞄准
-   5. /cmd_force_scanning： 真值表示不用跟着导航走了直接原地转就行了
+   5. /cmd_force_scanning： 值为真时表示不用跟着导航走了，直接原地转圈点头就行了（防止小幅度乱窜）
 6. 部署完成，通过`startup/launch/start.launch`启动程序
 
 ## 运行环境与编译：
    我们的系统为ubuntu20.04
    livox_ros_driver2、fastlio、auto_sentry分别在三个工作空间中，分别编译  
    auto_sentry使用catkin编译，方式为catkin_make  
-   
 
 ## 依赖项
 1. depthAI-core https://gitee.com/oakchina/depthai-core/releases/
@@ -56,8 +55,8 @@ robot_serial : 上下位机通信消息示例
 5. ros-\<version\>-move-base
 6. ros-\<version\>-map-server
 7. ros-\<version\>-depthimage-to-laserscan
-8. cmake时会自动下载spectacularAI的依赖，如果下载过慢，可以手工下载下面的包，并放置于`localize/slam/spectacular_ai/thirdparty`下
-   https://github.com/SpectacularAI/sdk/releases/download/v1.10.0/spectacularAI_depthaiPlugin_cpp_non-commercial_1.10.0.tar.gz
+8. cmake时会自动下载spectacularAI的依赖，如果下载过慢，可以手工下载下面的包，并放置于`localize/slam/spectacular_ai/thirdparty`下  
+   https://github.com/SpectacularAI/sdk/releases/download/v1.10.0/spectacularAI_depthaiPlugin_cpp_non-commercial_1.10.0.tar.gz  
 
 ## 坐标系定义
 使用标准ROS坐标系 https://www.ros.org/reps/rep-0103.html
